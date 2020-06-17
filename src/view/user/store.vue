@@ -21,13 +21,13 @@
     <div class="store-service">
       <div class="store-service-title flex-center">门店服务</div>
 
-      <div v-for="(item,index) in projects">
+      <div v-for="(item,index) in projects" :key="index">
         <div class="store-service-item-title flex-center" @click="openOrCloseProject(index)">
           <span>{{item.projectTypeName}} <b>共{{item.projectInfos.length}}项</b></span>
           <img :src="projectListIndex===index?'./static/up.png':'./static/down.png'" alt="">
         </div>
         <div v-show="projectListIndex===index" v-for="(projectItem,projuctIndex) in item.projectInfos"
-             class="flex-center store-service-item">
+             class="flex-center store-service-item" :key="projuctIndex">
           <div>
             <span class="store-service-items">{{projectItem.name}}</span>
             <span class="store-service-info">{{projectItem.comment}}</span>
@@ -41,14 +41,15 @@
 
     </div>
 
-    <div class="store-card">
+  <!-- 会员卡信息 -->
+    <!-- <div class="store-card">
       <span>会员卡</span>
       <div class="store-card-box">
 
         <div class="store-card-box-scroll" >
           <div class="store-card-item-box"
                @click="buyCard(item.id,item.price)"
-               v-for="(item,index) in cardServices">
+               v-for="(item,index) in cardServices" :key="index">
             <div class="store-card-item">
               <span class="store-card-item-price"><b>￥</b>{{item.actualPrice}}</span>
               <div><span>点击购买</span></div>
@@ -58,7 +59,7 @@
         </div>
 
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

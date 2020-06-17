@@ -1,9 +1,9 @@
 <template>
   <div class="choose-store">
-    <input type="text" placeholder="请输入门店名称或地址" v-model="storeName">
+    <input type="text" placeholder="请输入门店名称" v-model="storeName">
     <button class="search-store" @click="getStoreList">搜门店</button>
     <div class="store-info" v-for="(item,index) in storeList"
-         @click="checkedStore(index)">
+         @click="checkedStore(index)" :key="index">
       <img class="store-img" src='https://www.freelycar.com/upload/headimg/logo.jpg' alt="">
       <span class="store-title">{{item.name}}</span>
       <span class="store-local">门店地址：{{item.address}}</span>

@@ -65,7 +65,7 @@
             <img :src="[checkedId.indexOf(item.id)!==-1?'./static/check-yellow.png':'./static/check-no.png']" alt="">
             <span>{{item.name}}</span>
             <span class="billing-order-dialog-item-price">{{item.standard===0?'运费：':''}}￥{{item.price}}</span>
-            <div class="member-price" v-show="item.memberPrice||item.memberPrice===0"><span>会员价</span><span>￥{{item.memberPrice}}</span></div>
+            <!-- <div class="member-price" v-show="item.memberPrice||item.memberPrice===0"><span>会员价</span><span>￥{{item.memberPrice}}</span></div> -->
             <div :class="[item.comment==='***新用户专享***'?'is-new':'is-old']">{{item.comment}}</div>
           </div>
 
@@ -506,7 +506,7 @@
 
   .billing-order-project button
     height h(44)
-    width w(146)
+    width w(160)
     color white
     background #2049BF
     border-radius h(30)
@@ -647,4 +647,5 @@
     padding-top 4px
     color:red
   }
+
 </style>
