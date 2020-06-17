@@ -1,6 +1,6 @@
 <template>
   <div class="history-order">
-    <div class="history-order-card" v-for="(item,index) in msg">
+    <div class="history-order-card" v-for="(item,index) in msg" :key="index">
       <img src="./../../assets/car-head.png" alt="">
       <span class="history-order-num">订单号：<b>{{item.id}}</b></span>
       <span class="history-order-info">{{item.licensePlate}} {{item.color}} · {{item.carBrand}}</span>

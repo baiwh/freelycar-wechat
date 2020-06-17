@@ -13,7 +13,7 @@
         <div>品牌车系 <span>{{consumerOrder.carColor}} · {{consumerOrder.carBrand}}</span></div>
         <div>车主名字 <span>{{consumerOrder.clientName}}</span></div>
         <div>下单时间 <span>{{consumerOrder.createTime}}</span></div>
-        <div class="order-detail-item">预约项目 <span v-for="(item,index) in orderInfo.consumerProjectInfos">{{item.projectName}}</span></div>
+        <div class="order-detail-item">预约项目 <span v-for="(item,index) in orderInfo.consumerProjectInfos" :key="index">{{item.projectName}}</span></div>
         <div>钥匙位置 <span class="order-detail-key">{{tabBar===0?consumerOrder.userKeyLocation:consumerOrder.staffKeyLocation}}<img src="./../../assets/position-blue2.png" alt=""></span></div>
         <div>停放位置 <span>{{consumerOrder.parkingLocation}}</span></div>
       </div>
@@ -110,9 +110,13 @@
         this.$get('/wechat/order/getOrderDetail',{
           id:this.orderId
         }).then(res=>{
+
+          console.log('----')
+          console.log(res)
+
           this.orderInfo=res
           this.consumerOrder=res.consumerOrder
-          this.carImageUrl = res.clientOrderImg.url
+          this.carImageUrl = this.consumerOrder.carImageUrl
         })
       },
 

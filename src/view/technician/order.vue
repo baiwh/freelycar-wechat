@@ -10,7 +10,7 @@
     </div>
 
     <!--待服务订单-->
-    <div v-show="tabBar==='待服务订单'" v-for="(item,index) in orderList">
+    <div v-show="tabBar==='待服务'" v-for="(item,index) in orderList" :key="index" >
       <div class="order-card">
         <div class="order-card-head">
           <img src="./../../assets/car-head.png" alt="">
@@ -19,21 +19,34 @@
           <button @click="takeOrder(item.licensePlate,item.id,item.arkSn,item.keyLocation)"
                   :class="[item.arkSn===arkSn && !orderProcessing?'bg-blue':'bg-gray']">接单</button>
         </div>
-        <div class="order-card-info" @click="orderDetail(item.id,item.arkSn)">
+        <!-- <div class="order-card-info" @click="orderDetail(item.id,item.arkSn)"> -->
+        <div class="order-card-info">
           <span>车主姓名 {{item.clientName}}</span>
           <span>下单时间 {{item.createTime}}</span>
           <span>预约项目 <b>{{item.projectNames}}</b></span>
           <span>钥匙位置 {{item.keyLocation}}</span>
           <span>车辆停放位置 {{item.parkingLocation}}</span>
+          <div class="order-detail-other">
+            <span @click="showCarImg"><img src="./../../assets/my-car-img.png" alt="">车辆照片</span>
+            <span @click="callUser(item)"><img src="./../../assets/call-service.png" alt="">联系车主</span> 
+          </div>
         </div>
-        <img class="order-card-more" src="./../../assets/more.png" alt="">
+        <!-- <img class="order-card-more" src="./../../assets/more.png" alt=""> -->
+      </div>
+      <!-- 查看图片模态框 -->
+      <div class="dialog-layer" v-show="isCarImgShow">
+        <div class="dialog-box-black my-order-dialog-box">
+          <img src="./../../assets/close.png" @click="showCarImg" class="dialog-box-black-close" alt="">
+          <img :src="item.carImageUrl" class="dialog-car-img" alt="">
+          <div v-show="!item.carImageUrl" class="dialog-box-black-text">车主未上传照片</div>
+        </div>
       </div>
     </div>
 
     <!--已接到订单-->
-    <div v-show="tabBar==='已接到订单'">
+    <div v-show="tabBar==='服务中'">
       <div class="order-card" v-for="(item,index) in myOrderList"
-           @click="myOrderDetail(item.id,item.arkSn,item.userKeyLocationSn,item.userKeyLocation)">
+           @click="myOrderDetail(item.id,item.arkSn,item.userKeyLocationSn,item.userKeyLocation)" :key="index">
         <div class="order-card-head">
           <img src="./../../assets/car-head.png" alt="">
           <b>订单号：{{item.id}}</b>
@@ -47,6 +60,16 @@
         </div>
         <img class="order-card-myorder-more" src="./../../assets/more.png" alt="">
       </div>
+    </div>
+    <!-- 已完成 -->
+    <div v-show="tabBar==='已完成'">
+      <div v-show="!msg.length">暂无历史订单</div>
+      <div class="history-order-card" v-for="(item,index) in msg" :key="index">
+      <img src="./../../assets/car-head.png" alt="">
+      <span class="history-order-num">订单号：<b>{{item.id}}</b></span>
+      <span class="history-order-info">{{item.licensePlate}} {{item.color}} · {{item.carBrand}}</span>
+      <span class="history-order-state">已交付</span>
+    </div>
     </div>
 
     <!--开门成功-->
@@ -65,22 +88,28 @@
     name: 'order',
     data() {
       return {
-        msg: '',
-        selectedLabelDefault: '待服务订单',
+        msg: [],
+        selectedLabelDefault: '待服务',
         tabs: [{
-          label: '待服务订单',
+          label: '待服务',
         }, {
-          label: '已接到订单',
-        }],
+          label: '服务中',
+        },{
+          label: '已完成'
+        }
+        ],
         search:'',
         orderList:[],
         myOrderList:[],
-        tabBar:'待服务订单',
+        tabBar:'待服务',
         arkSn:'',
         isOpenDoorShow:false,
         isSuccessShow:false,
         arkInfoState:'tecGetKey',
-        orderProcessing:false
+        orderProcessing:false,
+        isCarImgShow:false,
+        // 车辆图片
+        carImageUrl:''
       }
     },
     methods: {
@@ -91,12 +120,15 @@
           storeId:localStorage.getItem('storeId'),
           staffId:localStorage.getItem('staffId')
         }).then(res=>{
+          console.log(res)
           this.orderList=res
+          console.log(res)
           if(this.myOrderList.length>0){
             this.orderProcessing=true
           }
         })
       },
+      //
 
       // 已接到
       getFinishOrders(){
@@ -107,6 +139,17 @@
         }).then(res=>{
           this.myOrderList =res
           this.getOrders()
+        })
+      },
+      //已完成
+      // 获取订单列表
+      getOrderList(){
+        this.$get('/wechat/employee/listHistoryOrders',{
+          staffId:localStorage.getItem('staffId'),
+          keyword:this.keyword
+        }).then(res=>{
+          this.msg = res
+          console.log(res)
         })
       },
 
@@ -128,7 +171,39 @@
         }
 
       },
+      // 获取车辆照片
+      showCarImg(){
+        // console.log(item)
+        this.isCarImgShow = !this.isCarImgShow
+      },
 
+      //联系车主
+      //传入遍历的一项
+      callUser(item){
+        this.$createDialog({
+          type: 'confirm',
+          title: '提示',
+          content:'您是否确认'+item.licensePlate+'拨打车主电话？',
+          confirmBtn: {
+            text: '确认',
+            active: true,
+            disabled: false,
+            href: 'javascript:;'
+          },
+          cancelBtn: {
+            text: '取消',
+            active: false,
+            disabled: false,
+            href: 'javascript:;'
+          },
+          onConfirm: () => {
+            window.location.href = "tel:"+item.phone
+          },
+          onCancel: () => {
+            console.log('取消')
+          }
+        }).show()
+      },
       // 接单
       takeOrder(licensePlate,id,arkSn,keyLocation){
         // 判断是否有正在进行的单子
@@ -216,6 +291,7 @@
     },
     mounted: function () {
       this.getFinishOrders()
+      this.getOrderList() //已接到
       this.arkSn=localStorage.getItem('arkSn')
       if(this.$route.query.tabBar){
         this.tabBar = this.$route.query.tabBar
@@ -363,4 +439,58 @@
     position absolute
     right w(31)
     top h(33)
+
+  .history-order-card
+    height h(90)
+    width w(727)
+    background white
+    margin 0 w(11) h(16) w(11)
+    position relative
+
+  .history-order-card img
+    height w(68)
+    width w(68)
+    position absolute
+    transform translateY(-50%)
+    top 50%
+    left w(30)
+    border-radius 50%
+
+  .history-order-num
+    font-size w(20)
+    position absolute
+    top h(16)
+    left w(126)
+
+  .history-order-num b
+    color #858585
+
+  .history-order-info
+    font-size w(25)
+    position absolute
+    top h(48)
+    left w(126)
+
+  .history-order-state
+    color #2049BF
+    font-size w(25)
+    line-height h(90)
+    text-align center
+    position absolute
+    right w(33)
+
+  .order-detail-other
+    color #2049BF
+    span
+      float left
+      margin 0 w(10) 0 0 
+    img
+      height w(26)
+      width w(26)
+      margin 0 w(10) 0 0
+      font-size w(26)
+
+  .my-order-dialog-box
+    height h(900)
+    width w(600)
 </style>
