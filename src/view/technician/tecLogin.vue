@@ -12,7 +12,7 @@
       </div>
       <div class="btn">
         <router-link to="/login">
-          <button class="switch-user">切换用户</button>
+          <button class="switch-user">用户登录</button>
         </router-link>
         <button :class="loginBtn" @click="logIn">登录</button>
       </div>
