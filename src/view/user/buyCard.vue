@@ -2,7 +2,7 @@
   <div class="buy-card">
     <span class="buy-card-store">以下会员卡仅限于{{store}}使用</span>
 
-    <div class="buy-card-card" v-for="(item,index) in msg" @click="buyCard(item.id,item.price)">
+    <div class="buy-card-card" v-for="(item,index) in msg" @click="buyCard(item.id,item.price)" :key="index">
       <div class="buy-card-title">
         <span>{{item.name}}</span>
         <span>点击购买>></span>

@@ -2,7 +2,7 @@
   <div :class="orderClass">
     <img v-show="noOrderShow" class="my-order-kong" src="./../../assets/kong.png" alt="">
     <div v-show="noOrderShow" class="my-order-kong-text">您还没有预约订单哦</div>
-    <div class="order-card" v-for="(item,index) in msg">
+    <div class="order-card" v-for="(item,index) in msg" :key="index">
       <div class="order-state">
         <span
           :class="[item.state ===0 || item.state ===1 || item.state ===2 ?'order-state-title order-state-blue':'order-state-title order-state-gray']">
@@ -13,7 +13,7 @@
       <div class="order-info" @click="orderDetail(item.id)">
         <span class="order-info-brand">{{item.licensePlate}}  {{item.carBrand}}</span>
         <div>
-          <span class="order-info-type" v-for="(itemP,indexP) in item.projectNames.split(',')">{{itemP}}</span>
+          <span class="order-info-type" v-for="(itemP,indexP) in item.projectNames.split(',')" :key="indexP">{{itemP}}</span>
         </div>
         <span class="order-info-num">订单编号 {{item.id}}</span>
         <img class="order-info-more" src="./../../assets/more.png" alt="">

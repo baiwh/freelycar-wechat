@@ -22,7 +22,7 @@
       </div>
 
       <div class="my-car">
-        <div class="my-car-card" v-for="(item,index) in cars">
+        <div class="my-car-card" v-for="(item,index) in cars" :key="index">
           <img v-show="isEditCar" @click="delCar(index)" class="my-car-del" src="./../../assets/del.png" alt="">
           <img class="my-car-head" :src="[item.carImageUrl?item.carImageUrl:'./static/car-head.png']" alt="">
           <span class="my-car-num">{{item.licensePlate}}</span>
@@ -33,8 +33,8 @@
       </div>
 
     </div>
-
-    <div class="assets">
+<!-- 会员卡及抵用券 -->
+    <!-- <div class="assets">
       <div class="assets-card">
         <img src="./../../assets/my-card.png" alt="">
         <span>我的会员卡</span>
@@ -48,7 +48,7 @@
         <span>我的抵用券</span>
         <span class="assets-count"><b>0</b>个</span>
       </div>
-    </div>
+    </div> -->
 
     <div>
       <router-link to="/store">

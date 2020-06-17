@@ -39,15 +39,19 @@
     </div>
 
     <!--完工且未支付才显示-->
+    <!-- 显示测试 -->
+    <!-- <div class="pay-order-card"> -->
+
     <div class="pay-order-card" v-show="consumerOrder.state===2&&consumerOrder.payState===1">
-      <div class="pay-order-card-item" @click="choosePayWay">
-        <span>支付方式</span>
-        <span class="pay-order-info-blue">{{payWayInfo}}<img class="pay-order-more" src="./../../assets/more.png" alt=""></span>
-      </div>
       <div class="pay-order-card-item">
+        <span>支付方式</span>
+        <!-- 修改为只有微信支付 -->
+        <span class="pay-order-info-blue">{{payWayInfo}}</span>
+      </div>
+      <!-- <div class="pay-order-card-item">
         <span>卡内余额</span>
         <span class="pay-order-info-blue">{{myCard.length>0?myCard[0].balance:0}}元</span>
-      </div>
+      </div> -->
       <!--<div class="pay-order-card-item">-->
         <!--<span>抵用券</span>-->
         <!--<span class="pay-order-info-blue">已有2张<img class="pay-order-more" src="./../../assets/more.png" alt=""></span>-->
@@ -60,7 +64,7 @@
         <span>{{storeInfo.name}}</span>
       </div>
       <div class="pay-order-card-item-second">
-        <div v-for="(item,index) in consumerProjectInfos">
+        <div v-for="(item,index) in consumerProjectInfos" :key="index">
           <span class="pay-order-info-gray">{{item.projectName}}</span>
           <!--<span class="pay-order-info-yellow">￥{{item.price}}</span>-->
         </div>
@@ -70,6 +74,9 @@
         <!--<span class="pay-order-info-yellow">???-￥10</span>-->
       <!--</div>-->
       <!--完工或交车时显示-->
+      <!-- 显示测试 -->
+      <!-- <div class="pay-order-card-item" > -->
+
       <div class="pay-order-card-item" v-show="consumerOrder.state===2||consumerOrder.state===3">
         <span class="pay-order-info-gray">总计￥{{consumerOrder.totalPrice}}
           <a :href="['tel:' + storeInfo.phone]">
@@ -81,6 +88,9 @@
     </div>
 
     <!--完工且未支付时显示-->
+    <!-- 显示测试 -->
+    <!-- <div class="pay-order-button" > -->
+
     <div class="pay-order-button" v-show="consumerOrder.state===2&&consumerOrder.payState===1">
       <span class="pay-order-info-yellow">￥{{payWayInfo==='微信支付'||consumerOrder.firstPayMethod===2?consumerOrder.totalPrice:consumerOrder.memberPrice}}</span>
       <!--<span class="pay-order-info-yellow">￥{{consumerOrder.actualPrice}} <b class="pay-order-info-gray">??已优惠￥10</b></span>-->
@@ -113,7 +123,7 @@
         arkInfoState:'',
         isOpenDoorShow:false,
         isSuccessShow:false,
-        payWayInfo:'',
+        payWayInfo:'微信支付',
         myCard:[{balance:0}],
         storeInfo:{}
       }
@@ -127,49 +137,47 @@
           this.consumerOrder=res.consumerOrder
           this.consumerProjectInfos=res.consumerProjectInfos
           this.storeInfo=res.store
-          this.getMyCard()
+          // this.getMyCard()
         })
       },
 
-      // 获取我的会员卡
-      getMyCard(){
-        this.$get('/wechat/wxuser/getMyCards',{
-          id:localStorage.getItem('clientId'),
-          storeId:localStorage.getItem('storeId')
-        }).then(res=>{
-            if (res) {
-                this.myCard=res;
-                if(this.myCard.length > 0 && this.myCard[0].balance>=this.consumerOrder.actualPrice){
-                    this.payWayInfo = '会员卡支付'
-                }else{
-                    this.payWayInfo = '微信支付'
-                }
-            }else{
-                this.payWayInfo = '微信支付'
-            }
-        })
-      },
+      // // 获取我的会员卡
+      // getMyCard(){
+      //   this.$get('/wechat/wxuser/getMyCards',{
+      //     id:localStorage.getItem('clientId'),
+      //     storeId:localStorage.getItem('storeId')
+      //   }).then(res=>{
+      //       if (res) {
+      //           this.myCard=res;
+      //           if(this.myCard.length > 0 && this.myCard[0].balance>=this.consumerOrder.actualPrice){
+      //               this.payWayInfo = '会员卡支付'
+      //           }else{
+      //               this.payWayInfo = '微信支付'
+      //           }
+      //       }else{
+      //           this.payWayInfo = '微信支付'
+      //       }
+      //   })
+      // },
 
 //      选择支付方式
-      choosePayWay(){
-        this.$createActionSheet({
-          title: '请选择支付方式',
-          data: [
-            {
-              content: '微信支付',
-              align: 'left'
-            },
-            {
-              content: '会员卡支付',
-              align: 'left'
-            }
-          ],
-          onSelect: (item, index) => {
-            this.payWayInfo=item.content
-          }
-        }).show()
-      },
+//只有微信支付
+      // choosePayWay(){
+      //   this.$createActionSheet({
+      //     title: '请选择支付方式',
+      //     data: [
+      //       {
+      //         content: '微信支付',
+      //         align: 'left'
+      //       },
 
+      //     ],
+      //     onSelect: (item, index) => {
+      //       this.payWayInfo=item.content
+      //     }
+      //   }).show()
+      // },
+// 
       onCopy(){
         this.toast = this.$createToast({
           txt: '复制成功',
@@ -300,22 +308,24 @@
       // 支付
       toPayOrder(){
         if(this.consumerOrder.actualPrice){
-//        先判断支付方式
+        //先判断支付方式
+        //只保留微信支付
           if(this.payWayInfo==='微信支付'){
             this.wxPay()
-          } else {
-            if(this.myCard[0].balance>=this.consumerOrder.actualPrice){
-              this.vipCardPay()
-            }else {
-              this.toast = this.$createToast({
-                txt: '会员卡余额不足',
-                type: 'txt'
-              })
-              this.toast.show()
-            }
-          }
-        }else{
-          this.freePay()
+          } 
+        //   else {
+        //     if(this.myCard[0].balance>=this.consumerOrder.actualPrice){
+        //       this.vipCardPay()
+        //     }else {
+        //       this.toast = this.$createToast({
+        //         txt: '会员卡余额不足',
+        //         type: 'txt'
+        //       })
+        //       this.toast.show()
+        //     }
+        //   }
+        // }else{
+        //   this.freePay()
         }
       },
 
@@ -347,24 +357,25 @@
         })
       },
 
-//      会员卡支付
-      vipCardPay(){
-        this.$post('/wechat/pay/payOrderByCard',{
-          consumerOrder: {
-            id:this.orderId,
-            actualPrice: this.consumerOrder.memberPrice,
-            firstPayMethod: 0,
-            firstActualPrice: this.consumerOrder.memberPrice,
-            firstCardId: this.myCard[0].id,
-            secondPayMethod: "",
-            secondActualPrice: 0,
-            secondCardId: ""
-          },
-          useCoupons:[]
-        }).then(res=>{
-          this.isOpenDoor()
-        })
-      },
+//会员卡支付
+//删除会员卡支付
+      // vipCardPay(){
+      //   this.$post('/wechat/pay/payOrderByCard',{
+      //     consumerOrder: {
+      //       id:this.orderId,
+      //       actualPrice: this.consumerOrder.memberPrice,
+      //       firstPayMethod: 0,
+      //       firstActualPrice: this.consumerOrder.memberPrice,
+      //       firstCardId: this.myCard[0].id,
+      //       secondPayMethod: "",
+      //       secondActualPrice: 0,
+      //       secondCardId: ""
+      //     },
+      //     useCoupons:[]
+      //   }).then(res=>{
+      //     this.isOpenDoor()
+      //   })
+      // },
 
       // 零元单
       freePay(){
