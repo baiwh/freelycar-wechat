@@ -6,7 +6,7 @@
     <div class="form">
       <div class="form-box">
         <img class="user-info-name" src="./../../assets/name.png" alt="">
-        <input v-model="name" type="text" placeholder="请输入真实姓名" @blur="scrollTo0">
+        <input v-model="name" type="text" placeholder="请输入您的称呼" @blur="scrollTo0">
       </div>
 
       <div class="form-box">
@@ -14,6 +14,8 @@
         <div class="change-order-form-gender">
           <span @click="chooseGender('男')"><img :src="[gender==='男'?'./static/checked.png':'./static/no-checked.png']" alt="">男士</span>
           <span @click="chooseGender('女')"><img :src="[gender==='女'?'./static/checked.png':'./static/no-checked.png']" alt="">女士</span>
+          <span @click="chooseGender('保密')"><img :src="[gender==='保密'?'./static/checked.png':'./static/no-checked.png']" alt="">保密</span>
+
         </div>
       </div>
     </div>
