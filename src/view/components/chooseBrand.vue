@@ -23,7 +23,7 @@
       <p>热门品牌</p>
       <mt-swipe :auto="4000">
         <mt-swipe-item>
-          <a v-for="(item,index) in hotbrand" v-show="index<8" @click="choosebrand(item.id,item.brand,item.bgname)">
+          <a v-for="(item,index) in hotbrand" v-show="index<8" @click="choosebrand(item.id,item.brand,item.bgname)" :key="index">
             <img :src="item.bgname">
             <span>{{item.brand}}</span>
           </a>
@@ -253,7 +253,7 @@
         </div>
         <div class="mint-msgbox-content">
           <div class="carlines" v-for="(item,index) in vehiclesystem"
-               @click="choosedcarline(item.id,item.type,licensePlate,clientId,storeId,bgname)">
+               @click="choosedcarline(item.id,item.type,licensePlate,clientId,storeId,bgname)" :key="index">
             <p>{{item.type}}</p>
           </div>
         </div>
