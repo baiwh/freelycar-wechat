@@ -60,7 +60,7 @@
         <div class="billing-order-dialog-content">
 
           <div @click="selectProject(index)"
-               :class="[item.comment==='***新用户专享***'?'billing-order-dialog-item':'billing-order-dialog-item']"
+               :class="[item.comment==='***新用户专享***'?'billing-order-dialog-item':'billing-order-dialog-item',{active:!item.staffReady}]"
                v-for="(item,index) in projects" :key="index">
             <img :src="[checkedId.indexOf(item.id)!==-1?'./static/check-yellow.png':'./static/check-no.png']" alt="">
             <span>{{item.name}}</span>
@@ -187,6 +187,7 @@
           newUser:newUser
         }).then(res=>{
           this.projects = res
+          console.log(this.projects)
         })
       },
 
@@ -222,6 +223,7 @@
       // 选择项目
       selectProject(index){
         // 检测项目能不能选
+        console.log(this.projects[index].staffReady)
         if(this.projects[index].staffReady){
           this.consumerProjectList=[{
             price:this.projects[index].price,
@@ -595,7 +597,7 @@
     color #AFAEAE
   .billing-order-dialog-content
     height h(594)
-    margin-left w(30)
+    // margin-left w(30)
     overflow scroll
     .billing-order-dialog-item
       padding h(30) w(30) h(30) 0
@@ -611,7 +613,7 @@
     img
       height w(30)
       width w(30)
-      margin-right w(20)
+      margin 0 w(20)
 
   .billing-order-dialog-footer
     height h(110)
@@ -646,6 +648,10 @@
   .mark{
     padding-top 4px
     color:red
+  }
+  .active{
+    background 	#DCDCDC
+    opacity .7
   }
 
 </style>

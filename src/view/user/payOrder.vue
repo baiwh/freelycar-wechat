@@ -307,6 +307,7 @@
 
       // 支付
       toPayOrder(){
+        console.log('支付')
         if(this.consumerOrder.actualPrice){
         //先判断支付方式
         //只保留微信支付
@@ -324,8 +325,8 @@
         //       this.toast.show()
         //     }
         //   }
-        // }else{
-        //   this.freePay()
+        }else{
+          this.freePay()
         }
       },
 

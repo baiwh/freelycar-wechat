@@ -90,6 +90,7 @@
           arkSn: this.arkSn
         }).then(res => {
           this.msg = res
+          console.log(res)
           if (this.msg.length===0) this.noOrderShow=true
         })
       },
