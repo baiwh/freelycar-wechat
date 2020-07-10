@@ -180,7 +180,7 @@
         this.isProtocolShow=true
       },
 
-      // 获取门店服务列表
+      // 获取网点服务列表
       getStoreProject(newUser){
         this.$get('/wechat/ark/getProjects',{
           storeId:localStorage.getItem('storeId'),

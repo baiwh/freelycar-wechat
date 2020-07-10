@@ -6,7 +6,7 @@
       <span class="my-info-other">{{staffInfo.gender}}  ·  {{staffInfo.province}}  ·  {{staffInfo.city}}</span>
       <div class="my-info-position">
         <img src="../../assets/position.png" alt="位置">
-        <span>服务门店：{{storeName}}</span>
+        <span>服务网点：{{storeName}}</span>
         <button @click="toChooseStore">更换</button>
       </div>
     </div>
@@ -60,7 +60,7 @@
       }
     },
     methods: {
-      // 获取门店列表
+      // 获取网点列表
       getStoreList(){
         this.$get('/wechat/employee/listStaffByPhone',{
           phone:localStorage.getItem('phone')
@@ -89,11 +89,11 @@
         })
       },
 
-      // 更换门店按钮
+      // 更换网点按钮
       toChooseStore(){
         let data = this.pickerList
         this.picker = this.$createPicker({
-          title: '请选择服务门店',
+          title: '请选择服务网点',
           data: [data],
           onSelect: this.selectHandle,
           onCancel: this.cancelHandle

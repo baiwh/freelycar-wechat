@@ -6,7 +6,7 @@
     <div class="form">
       <div class="form-box">
         <img class="user-info-name" src="./../../assets/name.png" alt="">
-        <input v-model="name" type="text" placeholder="请输入您的称呼" @blur="scrollTo0">
+        <input v-model="name" type="text" placeholder="如何称呼您？" @blur="scrollTo0">
       </div>
 
       <div class="form-box">

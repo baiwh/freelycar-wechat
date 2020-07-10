@@ -25,7 +25,7 @@
         </a>
         <div></div>
         <a :href="['tel:' + storePhone]">
-          <span>联系门店</span>
+          <span>联系网点</span>
         </a>
       </div>
     </div>
@@ -33,7 +33,7 @@
     <div class="order-tracking-time-line">
       <div>状态跟踪</div>
 
-      <div class="order-tracking-box" v-for="(item,index) in msg">
+      <div class="order-tracking-box" v-for="(item,index) in msg" :key="index">
         <span class="order-tracking-date">{{item.date}}</span>
         <span class="order-tracking-time">{{item.time}}</span>
         <span class="order-tracking-title">{{item.title}}</span>
@@ -108,7 +108,7 @@
                 case 1:{
                   title='接车已接车'
                   info='您的爱车由'+this.consumerOrder.pickCarStaffName+'接单'
-                  this.title='爱车正送往门店'
+                  this.title='爱车正送往网点'
                   this.state='已接车'
                   break
                 }

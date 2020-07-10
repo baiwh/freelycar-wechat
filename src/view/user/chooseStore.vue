@@ -1,15 +1,15 @@
 <template>
   <div class="choose-store">
-    <input type="text" placeholder="请输入门店名称" v-model="storeName">
-    <button class="search-store" @click="getStoreList">搜门店</button>
+    <input type="text" placeholder="请输入网点名称" v-model="storeName">
+    <button class="search-store" @click="getStoreList">搜网点</button>
     <div class="store-info" v-for="(item,index) in storeList"
          @click="checkedStore(index)" :key="index">
       <img class="store-img" src='https://www.freelycar.com/upload/headimg/logo.jpg' alt="">
       <span class="store-title">{{item.name}}</span>
-      <span class="store-local">门店地址：{{item.address}}</span>
+      <span class="store-local">网点地址：{{item.address}}</span>
       <img class="checkbox" :src="index===chooseStore?'./static/check-yellow.png':'./static/check-no.png'" alt="">
     </div>
-    <button class="big-blue-btn" @click="submit">确认</button>
+    <!-- <button class="big-blue-btn" @click="submit">确认</button> -->
   </div>
 </template>
 
@@ -26,7 +26,7 @@
       }
     },
     methods: {
-      // 获取门店列表
+      // 获取网点列表
       getStoreList(){
         this.$get('/wechat/store/listAllStore',{
           storeName:this.storeName
@@ -35,11 +35,12 @@
         })
       },
 
-      // 勾选门店
+      // 勾选网点
       checkedStore(index){
         this.chooseStore = index
         this.storeId = this.storeList[index].id
         this.isChooseName = this.storeList[index].name
+        this.submit()
       },
 
       // 确认按钮
@@ -127,6 +128,8 @@
     top h(28)
 
   .store-local
+    display inline-block
+    width 60vw
     font-size w(22)
     position absolute
     left w(163)

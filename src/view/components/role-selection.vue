@@ -25,7 +25,7 @@
 
           //如果技师已经登录，直接去接单页
           if (localStorage.getItem('staffId') !== null && localStorage.getItem('jwt') !== null) {
-            //判断扫的柜子是哪个门店，帮ta切换过去/提醒他，没有这个柜子的操作权
+            //判断扫的柜子是哪个网点，帮ta切换过去/提醒他，没有这个柜子的操作权
             this.getArkInfo()
           }
 
@@ -37,7 +37,7 @@
               alert("请完善您的真实姓名")
               this.$router.push({path: '/userInfo'})
             } else {
-              //通过扫码进来的要判断门店id与用户默认id是否相同
+              //通过扫码进来的要判断网点id与用户默认id是否相同
               this.getUserArkInfo()
             }
           }
@@ -47,7 +47,7 @@
         }
       },
 
-      // 判断技师的门店
+      // 判断技师的网点
       getArkInfo(){
         this.$get('/wechat/ark/getArkInfo', {
           arkSn: this.arkSn
@@ -59,16 +59,16 @@
               staffId: localStorage.getItem('staffId')
             }).then(res => {
               if(res){
-                console.log('门店没有切换，直接跳转到order路径')
+                console.log('网点没有切换，直接跳转到order路径')
                 this.$router.push({path: '/order'})
               }else {
-                alert('您没有智能柜服务权限，详情请咨询门店')
+                alert('您没有智能柜服务权限，详情请咨询网点')
                 localStorage.clear()
                 this.$router.push({path:'/login'})
               }
             })
           } else {
-            // 更新门店信息
+            // 更新网点信息
             this.$post('/wechat/employee/selectStore', {
               id: localStorage.getItem('employeeId'),
               defaultStoreId: res.storeId
@@ -84,7 +84,7 @@
         })
       },
 
-      // 判断用户的门店
+      // 判断用户的网点
       getUserArkInfo(){
         this.$get('/wechat/ark/getArkInfo', {
           arkSn: this.arkSn
@@ -93,7 +93,7 @@
           if (res.storeId === localStorage.getItem('storeId')) {
             this.getOrderState()
           } else {
-            // 更新门店信息
+            // 更新网点信息
             this.$post('/wechat/wxuser/chooseDefaultStore', {
               id: localStorage.getItem('id'),
               defaultStoreId: res.storeId

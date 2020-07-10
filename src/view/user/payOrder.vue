@@ -58,7 +58,7 @@
       <!--</div>-->
     </div>
 
-    <!--门店及项目-->
+    <!--网点及项目-->
     <div class="pay-order-card">
       <div class="pay-order-card-item">
         <span>{{storeInfo.name}}</span>

@@ -114,7 +114,7 @@
             localStorage.setItem('Authorization', "Bearer " + res.jwt)
             // 判断是否存在柜子码
             if (localStorage.getItem('arkSn')) {
-              // 检查柜子信息，看是否需要换门店
+              // 检查柜子信息，看是否需要换网点
               this.getArkInfo()
             } else {
               if(!this.wxUserInfo.defaultStoreId) {
@@ -133,7 +133,7 @@
         }
       },
 
-      // 检查柜子信息，看是否需要换门店
+      // 检查柜子信息，看是否需要换网点
       getArkInfo() {
         this.$get('/wechat/ark/getArkInfo', {
           arkSn: localStorage.getItem('arkSn')
@@ -142,7 +142,7 @@
           if (res.storeId === this.wxUserInfo.defaultStoreId) {
             this.isNewUser()
           } else {
-            // 更新门店信息
+            // 更新网点信息
             this.$post('/wechat/wxuser/chooseDefaultStore', {
               id: this.wxUserInfo.id,
               defaultStoreId: res.storeId

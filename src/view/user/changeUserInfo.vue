@@ -7,7 +7,7 @@
       <span>{{msg.name}}</span>
     </div>
     <div class="change-order-form">
-      <span>真实姓名</span>
+      <span>称呼</span>
       <input @blur="scrollTo0" type="text" v-model="msg.trueName">
     </div>
     <div class="change-order-form">
@@ -15,6 +15,7 @@
       <div class="change-order-form-gender">
         <span @click="chooseGender('男')"><img :src="[msg.gender==='男'?'./static/checked.png':'./static/no-checked.png']" alt="">男</span>
         <span @click="chooseGender('女')"><img :src="[msg.gender==='女'?'./static/checked.png':'./static/no-checked.png']" alt="">女</span>
+        <span @click="chooseGender('保密')"><img :src="[msg.gender==='保密'?'./static/checked.png':'./static/no-checked.png']" alt="">保密</span>
       </div>
     </div>
     <div class="change-order-form">

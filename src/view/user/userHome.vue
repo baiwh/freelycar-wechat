@@ -7,7 +7,7 @@
       <span class="my-info-other">{{wxUserInfo.gender}}  ·  江苏  ·  南京</span>
       <div class="my-info-position">
         <img src="../../assets/position.png" alt="位置">
-        <span>定位门店：{{storeName}}</span>
+        <span>定位网点：{{storeName}}</span>
         <router-link to="/chooseStore">
           <button>更换</button>
         </router-link>
@@ -54,7 +54,7 @@
       <router-link to="/store">
         <div class="menu">
           <img class="card-icon" src="../../assets/store.png" alt="会员卡">
-          <span>门店详情</span>
+          <span>网点详情</span>
           <img class="more" src="../../assets/more.png" alt="详细">
         </div>
       </router-link>

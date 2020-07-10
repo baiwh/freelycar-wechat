@@ -60,10 +60,10 @@
     },
     methods: {
 
-      // 选择门店
+      // 选择网点
       chooseStore(){
         this.picker = this.$createPicker({
-          title: '请选择服务门店',
+          title: '请选择服务网点',
           data: [this.pickerList],
           onSelect: this.selectHandle,
           onCancel: this.cancelHandle
@@ -71,7 +71,7 @@
         this.picker.show()
       },
 
-//      确认选择的门店
+//      确认选择的网点
       selectHandle(selectedVal, selectedIndex, selectedText) {
         this.$post('/wechat/employee/selectStore',{
           id:localStorage.getItem('employeeId'),
@@ -113,7 +113,7 @@
           this.staffList.map(item=>{
             this.pickerList.push({text:item.storeName,value:item.storeId})
           })
-//          选择门店
+//          选择网点
           this.chooseStore()
         })
       },

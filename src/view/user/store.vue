@@ -19,7 +19,7 @@
     </div>
 
     <div class="store-service">
-      <div class="store-service-title flex-center">门店服务</div>
+      <div class="store-service-title flex-center">网点服务</div>
 
       <div v-for="(item,index) in projects" :key="index">
         <div class="store-service-item-title flex-center" @click="openOrCloseProject(index)">
@@ -34,7 +34,7 @@
           </div>
           <div>
             <span class="store-service-price">￥{{projectItem.price}}</span>
-            <span class="store-service-price-info">门店价</span>
+            <span class="store-service-price-info">网点价</span>
           </div>
         </div>
       </div>
@@ -84,7 +84,7 @@
       }
     },
     methods: {
-//        获取门店信息
+//        获取网点信息
       getStoreDetail() {
         this.$get('/wechat/store/getDetail', {
           id: localStorage.getItem('storeId')
@@ -108,7 +108,7 @@
         })
       },
 
-//      获取门店图片
+//      获取网点图片
       getImg() {
         this.$get('/wechat/store/getImgs', {
           storeId: localStorage.getItem('storeId')
