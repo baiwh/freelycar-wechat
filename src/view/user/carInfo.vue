@@ -199,7 +199,7 @@
       //数字字母缩写
       savenumber(event){
         let number = event.target.innerText
-        if(this.licensePlate.length < 7){
+        if(this.licensePlate.length <= 7){
           this.licensePlate +=number
         }
         

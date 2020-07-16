@@ -181,8 +181,7 @@
             this.userInfo.headimgurl=localStorage.getItem('headImgUrl')
             this.userInfo.nickname=localStorage.getItem('nickName')
             this.userInfo.subscribe=localStorage.getItem('subscribe')
-            console.log(localStorage.getItem('subscribe'))
-
+            console.log('1是否关注微信公众号'+localStorage.getItem('subscribe'))
             // 是否关注公众号
             if(localStorage.getItem('subscribe') == "false"){
               window.location.href = "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd"
@@ -201,6 +200,7 @@
               localStorage.setItem('subscribe',this.userInfo.subscribe)
               localStorage.setItem('nickName',this.userInfo.nickname)
               localStorage.setItem('headImgUrl',this.userInfo.headimgurl)
+              console.log('2是否关注微信公众号'+localStorage.getItem('subscribe'))
               // 是否关注公众号
               if(localStorage.getItem('subscribe') == "false"){
                 window.location.href = "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd"

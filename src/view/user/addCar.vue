@@ -23,10 +23,11 @@
       position="bottom"
       popup-transition="popup-fade">
       <div class="car-plate">
-        <div class="car-plate-container-new">
+        <div class="car-plate-container">
           <mt-button class='plate-number-new' type="default" v-for="(item,index) in English_Number" :key="index" @click="savenumber">{{item.name}}</mt-button>
           <mt-button class='plate-number-new' type="default" @click="deletenumber">←</mt-button>
           <mt-button class='plate-number-confirm' type="default" @click="confirm">确认</mt-button>
+
         </div>
       </div>
     </mt-popup>
@@ -180,7 +181,7 @@
       //数字字母缩写
       savenumber(event){
         let number = event.target.innerText
-        if(this.licensePlate.length < 7){
+        if(this.licensePlate.length <= 7){
           this.licensePlate +=number
         }
         
@@ -224,7 +225,7 @@
         this.carImageUrl = ''
       },
 
-      // 提交
+      // 提交 
       addCar(){
         if(this.licensePlate&&this.chooseBrand.carline){
           this.$post('/wechat/client/addCar',{
@@ -345,15 +346,6 @@
     top 0 
     bottom 0
     margin auto
-  .car-plate-container-new
-    padding 3vw 2vw 0vw 2vw
-    text-align center
-    position absolute
-    left 0
-    right 0 
-    top 0 
-    bottom 0
-    margin auto
   .plate-number
     width 8%
     height 15%
@@ -365,9 +357,9 @@
     width 6.5%
     height 15%
     padding 0 
-    margin 1.6vw
-    font-size 15px
-    line-height 15px
+    margin 1.5vw
+    font-size 14px
+    line-height 14px
   .plate-number-confirm
     height 15%
     padding 0 

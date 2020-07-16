@@ -2,7 +2,7 @@
   <div class="change-car">
     <div v-for="(item,index) in carList"
          @click="chooseCar(item.licensePlate,item.id)"
-         class="change-car-card">
+         class="change-car-card" :key="index">
       <img class="change-car-card-img" :src="[item.carImageUrl?item.carImageUrl:'./static/car.png']" alt="">
       <!--<img class="change-car-card-img" src="./../../assets/car.png" alt="">-->
       <div>

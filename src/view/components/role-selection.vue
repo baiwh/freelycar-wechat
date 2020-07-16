@@ -10,12 +10,15 @@
     data() {
       return {
         trueName: '',
-        arkSn: ''
+        arkSn: '',
+        userInfo:{},
+        code:''
       }
     },
     mounted: function () {
       this.arkSn = this.$route.params.arkSn
       localStorage.setItem('arkSn', this.arkSn)
+      this.checkSubscribe()
       this.isLogin()
     },
     methods: {
@@ -131,9 +134,57 @@
           }
           console.log('捕捉测试err',err)
         })
-      }
+      },
+      //判断是否存在code参数
+      checkSubscribe(){
+        console.log('222222')
+        if(this.getQueryString("code")!=null){
+          this.code = this.getQueryString("code")
+          console.log("第一次code"+this.code)
+          // 页面里的code和localstorage里的一样
+          if(this.code===localStorage.getItem("code")){
+            this.userInfo.subscribe=localStorage.getItem('subscribe')
+            console.log('1是否关注微信公众号'+localStorage.getItem('subscribe'))
+            // 是否关注公众号
+            if(localStorage.getItem('subscribe') == "false"){
+              window.location.href = "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd"
+            }
+          }else{
+            //将code保存起来
+            localStorage.setItem("code",this.code)
+            console.log("第二次code"+this.code)
+            //获取个人信息
+            this.$get('/wechat/config/getWeChatUserInfo',{
+              code:this.code
+            }).then(res=>{
+              console.log(res)
+              this.userInfo = res
+              localStorage.setItem('subscribe',this.userInfo.subscribe)
+              console.log('是否关注微信公众号'+localStorage.getItem('subscribe'))
+              // 是否关注公众号
+              if(localStorage.getItem('subscribe') == "false"){
+                window.location.href = "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd"
+              }
+            })
+          }
+        }else{
+          //console.log('未授权')
+          // 开发
+          // window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2frole-select%2f'+this.arkSn+'&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+          window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+          // 线上
+        }
+      },
 
-
+      //判断参数是否存在
+      getQueryString(name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+          return unescape(r[2]);
+        }
+        return null;
+      },
     },
   };
 </script>
