@@ -44,7 +44,7 @@ export default {
         //如果用户已经登录，
         if (
           localStorage.getItem("jwt") !== null &&
-          localStorage.getItem("clientId") !== null
+          localStorage.getItem("clientId") !== null 
         ) {
           this.trueName = localStorage.getItem("trueName");
           //若用户没有填写真实姓名，则先让其填写真实姓名

@@ -30,8 +30,9 @@
             <span @click="showCarImg"><img src="./../../assets/my-car-img.png" alt="">车辆照片</span>
             <span @click="callUser(item)"><img src="./../../assets/call-service.png" alt="">联系车主</span> 
           </div>
-        </div>
+        <!-- </div> -->
         <!-- <img class="order-card-more" src="./../../assets/more.png" alt=""> -->
+        </div>
       </div>
       <!-- 查看图片模态框 -->
       <div class="dialog-layer" v-show="isCarImgShow">
@@ -122,7 +123,6 @@
         }).then(res=>{
           console.log(res)
           this.orderList=res
-          console.log(res)
           if(this.myOrderList.length>0){
             this.orderProcessing=true
           }

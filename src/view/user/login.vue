@@ -320,6 +320,7 @@
 
   .password
     margin-top h(76)
+    z-index 999
 
   .password img
     height h(43)
@@ -327,13 +328,15 @@
 
   .password-info
     position absolute
-    width w(150)
+    width w(160)
     line-height h(45)
-    font-size w(24)
+    font-size 3.4vw
     right 0
     border-left $border-gray
     padding 0 w(82) 0 w(36)
     text-align center
+    z-index 999
+    cursor:pointer;
 
   .gray-info
     color darkgray

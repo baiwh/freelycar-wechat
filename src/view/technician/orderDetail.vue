@@ -113,10 +113,9 @@
 
           console.log('----')
           console.log(res)
-
           this.orderInfo=res
           this.consumerOrder=res.consumerOrder
-          this.carImageUrl = this.consumerOrder.carImageUrl
+          this.carImageUrl = this.orderInfo.clientOrderImg.url
         })
       },
 
