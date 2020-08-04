@@ -405,12 +405,18 @@
       }
 
     },
-    mounted: function () {
+    created:function(){
       this.storeName=localStorage.getItem('storeName')
       this.consumerOrder.clientId=localStorage.getItem('clientId')
       this.getUserInfo()
       this.wxConfig()
     },
+    // mounted: function () {
+    //   this.storeName=localStorage.getItem('storeName')
+    //   this.consumerOrder.clientId=localStorage.getItem('clientId')
+    //   this.getUserInfo()
+    //   this.wxConfig()
+    // },
     computed:{
       orderPrice:function () {
         let price=0

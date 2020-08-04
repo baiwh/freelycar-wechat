@@ -10,7 +10,7 @@
       <div class="password">
         <img src="../../assets/password.png" alt="验证码">
         <input type="text" maxlength="6" placeholder="请输入验证码" v-model="password">
-        <span :class="getCodeInfo" @click="getCode">{{passwordInfo}}</span>
+        <div :class="getCodeInfo" @click="getCode">{{passwordInfo}}</div>
       </div>
       <div class="btn">
         <router-link to="/tecLogin">
@@ -268,7 +268,7 @@
         }
       },
       getCodeInfo: function () {
-        if (this.phone.length === 11 && this.getCodeInfoTime === 60) {
+        if (this.phone.length == 11 && this.getCodeInfoTime == 60) {
           return 'password-info blue-info'
         } else {
           return 'password-info gray-info'
@@ -320,7 +320,6 @@
 
   .password
     margin-top h(76)
-    z-index 999
 
   .password img
     height h(43)
@@ -336,7 +335,6 @@
     padding 0 w(82) 0 w(36)
     text-align center
     z-index 999
-    cursor:pointer;
 
   .gray-info
     color darkgray
@@ -346,16 +344,17 @@
 
   .btn
     display flex
-    justify-content center
+    justify-content center 
+    margin w(116) 0
 
   .btn button
     height h(70)
     width w(300)
-    margin w(116) w(28)
     border-radius h(35)
     border 0 solid
     color white
     font-size w(31)
+    margin 0 w(30)
 
   .switch-user
     background-color $bt-yellow
