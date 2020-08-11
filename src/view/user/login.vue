@@ -9,14 +9,14 @@
       </div>
       <div class="password">
         <img src="../../assets/password.png" alt="验证码">
-        <input type="text" maxlength="6" placeholder="请输入验证码" v-model="password">
-        <div :class="getCodeInfo" @click="getCode">{{passwordInfo}}</div>
+        <input class="password-inp" type="text" maxlength="6" placeholder="请输入验证码" v-model="password">
+        <div class="password-info" :class="getCodeInfo" @click="getCode">{{passwordInfo}}</div>
       </div>
       <div class="btn">
         <router-link to="/tecLogin">
           <button class="switch-user">技师登录</button>
         </router-link>
-        <button :class="loginBtn" @click="logIn">登录</button>
+        <button  :class="loginBtn" @click="logIn">登录</button>
       </div>
     </div>
 
@@ -45,12 +45,15 @@
         arkSn: null,
         wxUserInfo: {},
         redirect:'',
-        code:''
+        code:'',
+        //验证码 登录样式转变
+        isActive:true,
+        isCodeActive:true
       }
     },
     created(){
 
-      // console.log(localStorage.getItem('frompage'))
+      console.log(localStorage.getItem('frompage'))
       this.redirect = this.$route.query.redirect
       this.arkSn=localStorage.getItem('arkSn')
       //获取redirect的值并缓存，当值存在并改变时，改变redirect的值
@@ -166,6 +169,11 @@
           this.isCode()
         } else {
           console.log("请在微信客户端打开！")
+          this.toast = this.$createToast({
+            txt: '请在微信客户端打开，以便正常访问！',
+            type: 'txt'
+          })
+          this.toast.show()
           return false
         }
       },
@@ -262,16 +270,28 @@
     computed: {
       loginBtn: function () {
         if (this.phone.length === 11 && this.password.length === 6) {
-          return 'login-btn-blue'
+          return {
+            'login-btn-blue':this.isActive,
+            'login-btn-gray':!this.isActive
+          }
         } else {
-          return 'login-btn-gray'
+          return {
+            'login-btn-blue':!this.isActive,
+            'login-btn-gray':this.isActive
+          }
         }
       },
       getCodeInfo: function () {
-        if (this.phone.length == 11 && this.getCodeInfoTime == 60) {
-          return 'password-info blue-info'
+        if (this.phone.length === 11 && this.getCodeInfoTime === 60) {
+          return {
+            'blue-info':this.isCodeActive,
+            'gray-info':!this.isCodeActive
+          }
         } else {
-          return 'password-info gray-info'
+          return {
+            'blue-info':!this.isCodeActive,
+            'gray-info':this.isCodeActive
+          }
         }
       },
     }
@@ -319,7 +339,12 @@
     width w(29)
 
   .password
-    margin-top h(76)
+    width 85vw
+    margin h(76) 0 0 -1vw
+  
+  .password .password-inp
+    margin 0 0 0 5vw
+    width 42vw
 
   .password img
     height h(43)
@@ -340,7 +365,7 @@
     color darkgray
 
   .blue-info
-    color #2049BF
+    color blue
 
   .btn
     display flex
