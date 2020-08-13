@@ -51,7 +51,7 @@
     <button class="submit-btn" @click="submit">提交</button>
 
     <!--模态框-->
-    <div class="dialog-layer" v-show="isDialogShow">
+    <div class="dialog-layer" v-if="isDialogShow">
       <div class="dialog-box billing-order-dialog">
         <div class="billing-order-dialog-header">
           <span>{{storeName}}</span>
@@ -140,7 +140,8 @@
         checkedId:[],
         idList:[],
         toastTxt:'',
-        submitOrder:false
+        submitOrder:false,
+        arkSn:'',
       }
     },
     methods: {
@@ -414,11 +415,36 @@
             this.isOpenDoorShow=false
           }
         })
-      }
+      },
 
+    getUserArkInfo() {
+      this.$get("/wechat/ark/getArkInfo", {
+        arkSn: this.arkSn
+      }).then(res => {
+        if (res.storeId === localStorage.getItem("storeId")) {
+          console.log('当前门店正确')
+            this.storeName=localStorage.getItem('storeName')
+        } else {
+          console.log('门店更新')
+          this.$post("/wechat/wxuser/chooseDefaultStore", {
+            id: localStorage.getItem("id"),
+            defaultStoreId: res.storeId
+          }).then(res => {
+            if (res) {
+              localStorage.setItem("storeName", res.defaultStoreName);
+              localStorage.setItem("storeId", res.defaultStoreId);
+              localStorage.setItem("clientId", res.defaultClientId);
+            }
+            this.storeName=localStorage.getItem('storeName')
+          });
+        }
+      });    
+      },
     },
     created:function(){
       this.storeName=localStorage.getItem('storeName')
+      this.arkSn = this.$route.query.arkSn
+      this.getUserArkInfo();
       this.consumerOrder.clientId=localStorage.getItem('clientId')
       this.getUserInfo()
       this.wxConfig()

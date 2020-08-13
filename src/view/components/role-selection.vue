@@ -21,12 +21,10 @@ export default {
       if(typeof(this.$route.query.redirect) !== "undefined"){
         localStorage.setItem('redirect',this.redirect)
       }
-  },
-  mounted: function() {
-    this.arkSn = this.$route.params.arkSn;
-    console.log(this.arkSn)
-    localStorage.setItem("arkSn", this.arkSn);
-    this.checkSubscribe();
+      this.arkSn = this.$route.params.arkSn;
+      console.log(this.arkSn)
+      localStorage.setItem("arkSn", this.arkSn);
+      this.checkSubscribe();
   },
   methods: {
     // 是否登录过
@@ -104,10 +102,10 @@ export default {
         arkSn: this.arkSn
       }).then(res => {
         localStorage.setItem("arkName", res.name);
-        if (res.storeId === localStorage.getItem("storeId")) {
-          this.getOrderState();
-        } else {
-          // 更新网点信息
+        // if (res.storeId === localStorage.getItem("storeId")) {
+        //   this.getOrderState();
+        // } else {
+          // 扫码就要更新网点信息
           this.$post("/wechat/wxuser/chooseDefaultStore", {
             id: localStorage.getItem("id"),
             defaultStoreId: res.storeId
@@ -119,7 +117,7 @@ export default {
             }
             this.getOrderState();
           });
-        }
+        // }
       });
     },
 
@@ -135,10 +133,10 @@ export default {
             if (res[0].state < 3) {
               this.$router.push({ path: "/myOrder" });
             } else {
-              this.$router.push({ path: "/billingOrder" });
+              this.$router.push({ path: "/billingOrder" ,query:{arkSn:this.arkSn}});
             }
           } else {
-            this.$router.push({ path: "/billingOrder" });
+            this.$router.push({ path: "/billingOrder",query:{arkSn:this.arkSn} });
           }
         })
         .catch(err => {
