@@ -52,10 +52,13 @@
       }
     },
     created(){
-
       console.log(localStorage.getItem('frompage'))
       this.redirect = this.$route.query.redirect
-      this.arkSn=localStorage.getItem('arkSn')
+      if(this.$route.query.arkSn){
+        localStorage.setItem('arkSn', this.$route.query.arkSn)
+      }else{
+        this.arkSn = localStorage.getItem('arkSn')
+      } 
       //获取redirect的值并缓存，当值存在并改变时，改变redirect的值
       if(typeof(this.$route.query.redirect) !== "undefined"){
         localStorage.setItem('redirect',this.redirect)

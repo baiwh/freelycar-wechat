@@ -51,7 +51,7 @@
     <button class="submit-btn" @click="submit">提交</button>
 
     <!--模态框-->
-    <div class="dialog-layer" v-if="isDialogShow">
+    <div class="dialog-layer" v-show="isDialogShow">
       <div class="dialog-box billing-order-dialog">
         <div class="billing-order-dialog-header">
           <span>{{storeName}}</span>
@@ -416,16 +416,11 @@
           }
         })
       },
-
+//判断存储的网点是否是当前网点
     getUserArkInfo() {
       this.$get("/wechat/ark/getArkInfo", {
         arkSn: this.arkSn
       }).then(res => {
-        if (res.storeId === localStorage.getItem("storeId")) {
-          console.log('当前门店正确')
-            this.storeName=localStorage.getItem('storeName')
-        } else {
-          console.log('门店更新')
           this.$post("/wechat/wxuser/chooseDefaultStore", {
             id: localStorage.getItem("id"),
             defaultStoreId: res.storeId
@@ -437,14 +432,17 @@
             }
             this.storeName=localStorage.getItem('storeName')
           });
-        }
-      });    
+      });
       },
     },
     created:function(){
-      this.storeName=localStorage.getItem('storeName')
-      this.arkSn = this.$route.query.arkSn
-      this.getUserArkInfo();
+      if(this.$route.query.arkSn){
+        this.arkSn = this.$route.query.arkSn
+        localStorage.setItem('arkSn',this.$route.query.arkSn)
+      }else{
+        this.arkSn = localStorage.getItem('arkSn');
+      }
+      this.getUserArkInfo(); 
       this.consumerOrder.clientId=localStorage.getItem('clientId')
       this.getUserInfo()
       this.wxConfig()

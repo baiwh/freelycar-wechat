@@ -16,13 +16,11 @@ export default {
   created(){
      // console.log(localStorage.getItem('frompage'))
       this.redirect = this.$route.query.redirect
-      this.arkSn=localStorage.getItem('arkSn')
       //获取redirect的值并缓存，当值存在并改变时，改变redirect的值
       if(typeof(this.$route.query.redirect) !== "undefined"){
         localStorage.setItem('redirect',this.redirect)
       }
       this.arkSn = this.$route.params.arkSn;
-      console.log(this.arkSn)
       localStorage.setItem("arkSn", this.arkSn);
       this.checkSubscribe();
   },
@@ -55,7 +53,7 @@ export default {
           }
         }
       } else {
-        this.$router.push({ path: "/login" });
+        this.$router.push({ path: "/login",query:{arkSn:this.arkSn} });
       }
     },
 
@@ -76,7 +74,7 @@ export default {
             } else {
               alert("您没有智能柜服务权限，详情请咨询网点");
               localStorage.clear();
-              this.$router.push({ path: "/login" });
+              this.$router.push({ path: "/login" ,query:{arkSn:this.arkSn}});
             }
           });
         } else {
@@ -102,10 +100,10 @@ export default {
         arkSn: this.arkSn
       }).then(res => {
         localStorage.setItem("arkName", res.name);
-        // if (res.storeId === localStorage.getItem("storeId")) {
-        //   this.getOrderState();
-        // } else {
-          // 扫码就要更新网点信息
+        if (res.storeId === localStorage.getItem("storeId")) {
+          this.getOrderState();
+        } else {
+          //扫码就要更新网点信息
           this.$post("/wechat/wxuser/chooseDefaultStore", {
             id: localStorage.getItem("id"),
             defaultStoreId: res.storeId
@@ -117,7 +115,7 @@ export default {
             }
             this.getOrderState();
           });
-        // }
+        }
       });
     },
 
