@@ -21,9 +21,8 @@
         <span class="billing-order-position-button" @click="addLocation">快速定位</span>
       </div>
 
-      <textarea v-model="consumerOrder.parkingLocation" class="billing-order-position-input" placeholder="请输入位置" name="" id="" cols="38" rows="3"></textarea>
+      <textarea v-model="consumerOrder.parkingLocation" class="billing-order-position-input" placeholder="请描述车辆停放的详细位置！" name="" id="" cols="38" rows="3"></textarea>
     </div>
-
     <div class="billing-order-card billing-order-photo">
       <div class="align-center">
         <span><img class="billing-order-img" src="./../../assets/img.png" alt="">上传爱车照片</span><span class="mark-text">建议上传车辆位置图片</span>
