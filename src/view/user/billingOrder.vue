@@ -26,7 +26,7 @@
 
     <div class="billing-order-card billing-order-photo">
       <div class="align-center">
-        <span><img class="billing-order-img" src="./../../assets/img.png" alt="">上传爱车照片</span>
+        <span><img class="billing-order-img" src="./../../assets/img.png" alt="">上传爱车照片</span><span class="mark-text">建议上传车辆位置图片</span>
       </div>
       <!--<cube-upload v-show="!isImgShow"-->
       <cube-upload ref="upload"
@@ -356,7 +356,8 @@
         }else if(!this.isAgree){
           this.toastTxt='请勾选同意使用协议'
           this.showTxt()
-        } else {
+        }
+        else {
           // 判断刚刚有没有点过提交
           if(this.submitOrder){
             alert('请勿重复提交')
@@ -698,6 +699,10 @@
   .active{
     background 	#DCDCDC
     opacity .7
+  }
+  .mark-text{
+    font-size w(24)
+    color red
   }
 
 </style>
