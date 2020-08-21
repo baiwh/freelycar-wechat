@@ -27,31 +27,32 @@ axios.interceptors.request.use(
 //响应拦截器异常处理
 axios.interceptors.response.use(response => {
   // console.log(response.data.message)
-  //console.log(localStorage.getItem('wxinfo'))
+  // console.log(localStorage.getItem('wxinfo'))
   if(response.data.message=="JWT Expired"){
-    localStorage.removeItem('jwt')
-    if(localStorage.getItem('clientId')){
-      // console.log(router.currentRoute.fullPath)
-      // localStorage.removeItem('wxinfo');
-      localStorage.removeItem('jwt')
-      router.replace({
+    // localStorage.removeItem('jwt')
+    // if(localStorage.getItem('clientId')){
+    //   // console.log(router.currentRoute.fullPath)
+    //   // localStorage.removeItem('wxinfo');
+    //   localStorage.removeItem('jwt')
+    localStorage.clear();
+      this.$router.push({
         path: '/login',
-        query: {
-          redirect: router.currentRoute.fullPath
-        }
+        // query: {
+        //   redirect: router.currentRoute.fullPath
+        // }
       })
 
-    }
-    if(localStorage.getItem('staffId')){
-      // localStorage.removeItem('staffinfo');
-      localStorage.removeItem('jwt')
-      router.replace({
-        path: '/tecLogin',
-        query: {
-          redirect: router.currentRoute.fullPath
-        }
-      })
-    }
+    // }
+    // if(localStorage.getItem('staffId')){
+    //   // localStorage.removeItem('staffinfo');
+    //   localStorage.removeItem('jwt')
+    //   router.replace({
+    //     path: '/tecLogin',
+    //     query: {
+    //       redirect: router.currentRoute.fullPath
+    //     }
+    //   })
+    // }
   }
   return response
 }, error => {

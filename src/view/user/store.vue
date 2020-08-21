@@ -156,7 +156,7 @@
               console.log(error)
             }
           })
-          wx.ready(function () {
+          wx.ready(() =>{
             console.log('微信接口成功')
             this.getUserLocation()
           })

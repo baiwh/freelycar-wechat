@@ -25,7 +25,6 @@
 
 <script>
   import wx from 'weixin-js-sdk'
-
   export default {
     name: 'login',
     data() {
@@ -51,8 +50,7 @@
         isCodeActive:true
       }
     },
-    created(){
-      console.log(localStorage.getItem('frompage'))
+    mounted(){
       this.redirect = this.$route.query.redirect
       if(this.$route.query.arkSn){
         localStorage.setItem('arkSn', this.$route.query.arkSn)
@@ -172,10 +170,6 @@
           this.isCode()
         } else {
           console.log("请在微信客户端打开！")
-          this.toast = this.$createToast({
-            txt: '请在微信客户端打开，以便正常访问！',
-            type: 'txt'
-          })
           this.toast.show()
           return false
         }
@@ -184,7 +178,7 @@
       //判断是否存在code参数
       isCode(){
         if(this.getQueryString("code")!=null){
-          this.code = this.getQueryString("code")
+          this.code = this.getQueryString("code");
           console.log("第一次code"+this.code)
           // 页面里的code和localstorage里的一样
           if(this.code===localStorage.getItem("code")){
@@ -218,11 +212,12 @@
               }
             })
           }
-        }else{
+        }
+        else{
           //console.log('未授权')
           // 开发
-          // window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
-          window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+          // window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect'
+          window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect'
           // 线上
         }
       },

@@ -141,6 +141,7 @@
         toastTxt:'',
         submitOrder:false,
         arkSn:'',
+        newUser:'',
       }
     },
     methods: {
@@ -152,7 +153,8 @@
           this.wxUserInfo = res.wxUserInfo
           this.cars = res.cars
           this.msg.name = res.wxUserInfo.trueName
-          this.getStoreProject(res.newUser)
+          // this.getStoreProject(res.newUser)
+          this.newUser = res.newUser;
           if(this.$route.query.licensePlate){
             this.msg.number = this.$route.query.licensePlate
             this.consumerOrder.carId=this.$route.query.id
@@ -219,7 +221,9 @@
 
       // 选择项目按钮
       chooseProject(){
+        this.getStoreProject(this.newUser)
         this.isDialogShow=true
+        
       },
 
       // 关闭模态框
@@ -435,17 +439,17 @@
       });
       },
     },
-    created:function(){
+    mounted:function(){
       if(this.$route.query.arkSn){
         this.arkSn = this.$route.query.arkSn
         localStorage.setItem('arkSn',this.$route.query.arkSn)
       }else{
         this.arkSn = localStorage.getItem('arkSn');
       }
+      this.wxConfig()
       this.getUserArkInfo(); 
       this.consumerOrder.clientId=localStorage.getItem('clientId')
       this.getUserInfo()
-      this.wxConfig()
     },
     // mounted: function () {
     //   this.storeName=localStorage.getItem('storeName')

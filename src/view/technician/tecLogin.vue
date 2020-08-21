@@ -46,8 +46,7 @@
         pickerList:[]
       }
     },
-    created(){
-
+    mounted(){
       // console.log(localStorage.getItem('frompage'))
       this.redirect = this.$route.query.redirect
       //获取redirect的值并缓存，当值存在并改变时，改变redirect的值
@@ -124,7 +123,6 @@
         let ua = window.navigator.userAgent.toLowerCase()
         console.log('ua',ua)
         if(ua.indexOf('micromessenger') !== -1){
-
           //判断是否存在code参数
           if(this.getQueryString("code")!=null){
             console.log(this.getQueryString("code"))
@@ -175,10 +173,10 @@
             //console.log('未授权')
 
             //开发
-            // window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3A%2F%2Fwww.freelycar.cn%2Fwechat%2FtecLogin&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
+            // window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3A%2F%2Fwww.freelycar.cn%2Fwechat%2FtecLogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect"
 
             // 部署
-            window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3A%2F%2Fwww.freelycar.com%2Fwechat%2FtecLogin&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
+            window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3A%2F%2Fwww.freelycar.com%2Fwechat%2FtecLogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect"
 
           }
 
@@ -211,9 +209,6 @@
         }
       },
     },
-    mounted(){
-
-    }
   }
 </script>
 

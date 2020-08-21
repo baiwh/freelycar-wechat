@@ -62,6 +62,7 @@
     <div class="pay-order-card">
       <div class="pay-order-card-item">
         <span>{{storeInfo.name}}</span>
+        <span class="pay-order-info-gray">{{storeInfo.Detail}}</span>
       </div>
       <div class="pay-order-card-item-second">
         <div v-for="(item,index) in consumerProjectInfos" :key="index">
@@ -137,6 +138,7 @@
           this.consumerOrder=res.consumerOrder
           this.consumerProjectInfos=res.consumerProjectInfos
           this.storeInfo=res.store
+          this.storeInfo.Detail = res.ark.location
           // this.getMyCard()
         })
       },
