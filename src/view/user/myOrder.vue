@@ -171,19 +171,26 @@
         }
       }
     },
-    created: function(){
-      this.arkSn=localStorage.getItem('arkSn')
-      if(localStorage.getItem('staffId')){
-        this.$router.push({path:'/order'})
-      }else if(localStorage.getItem('clientId')){
-        this.clientId = this.$route.query.id
-        // this.storePhone = localStorage.getItem('storePhone')
-        this.getOrderList()
-      }else {
-        this.$router.push({path:'/login'})
+    mounted: function(){
+      if(localStorage.getItem('arkSn')==null){
+        this.toast = this.$createToast({
+            txt: '请扫码获取订单信息',
+            type: 'txt'
+          })
+          this.toast.show()
+      }else{
+        this.arkSn=localStorage.getItem('arkSn')
+        if(localStorage.getItem('staffId')){
+          this.$router.push({path:'/order'})
+        }else if(localStorage.getItem('clientId')){
+          this.clientId = this.$route.query.id
+          // this.storePhone = localStorage.getItem('storePhone')
+          this.getOrderList()
+        }else {
+          this.$router.push({path:'/login'})
+        }
       }
     },
-    computed: {}
   }
 </script>
 
