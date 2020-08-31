@@ -6,7 +6,7 @@
         <span class="store-head-time">营业时间：{{time[0]}}-{{time[1]}}</span>
         <div class="store-head-img">
           <img src="./../../assets/distance.png" alt="">
-          <span>{{distance}}km</span>
+          <span>{{distance}}m</span>
         </div>
 
         <hr>
@@ -91,6 +91,7 @@
         }).then(res => {
           this.storeImgs = res.storeImgs
           this.store = res.store
+          console.log(res.store)
           this.projects = res.projects
           this.cardServices = res.cardServices
           this.time = [this.store.openingTime.split(' ')[1], this.store.closingTime.split(' ')[1]]
@@ -167,61 +168,62 @@
       },
 
 //      购买会员卡
-      buyCard(id,price){
-        if(this.myCard.length>0){
-          this.$get('/wechat/card/generateRechargeOrder',{
-            clientId:localStorage.getItem('clientId'),
-            cardServiceId:id,
-            cardId:this.myCard[0].id
-          }).then(res=>{
-            let cardId=res
-            this.wxPayCard(cardId,price)
-          })
-        }else {
-          this.$get('/wechat/card/generateCardOrder',{
-            clientId:localStorage.getItem('clientId'),
-            cardServiceId:id
-          }).then(res=>{
-            let cardId=res
-            this.wxPayCard(cardId,price)
-          })
-        }
-      },
+      // buyCard(id,price){
+      //   if(this.myCard.length>0){
+      //     this.$get('/wechat/card/generateRechargeOrder',{
+      //       clientId:localStorage.getItem('clientId'),
+      //       cardServiceId:id,
+      //       cardId:this.myCard[0].id
+      //     }).then(res=>{
+      //       let cardId=res
+      //       this.wxPayCard(cardId,price)
+      //     })
+      //   }else {
+      //     this.$get('/wechat/card/generateCardOrder',{
+      //       clientId:localStorage.getItem('clientId'),
+      //       cardServiceId:id
+      //     }).then(res=>{
+      //       let cardId=res
+      //       this.wxPayCard(cardId,price)
+      //     })
+      //   }
+      // },
 
       // 微信支付功能
-      wxPayCard(cardId,price){
-        this.$post('/wechat/pay/payOrderByWechat',{
-          openId: localStorage.getItem('openId'),
-          orderId: cardId,
-          totalPrice: price
-        }).then(res=>{
-          console.log(res)
-          let payInfo = res
-          wx.chooseWXPay({
-            timestamp: payInfo.timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-            nonceStr: payInfo.nonceStr, // 支付签名随机串，不长于 32 位
-            package: payInfo.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
-            signType: payInfo.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-            paySign: payInfo.paySign, // 支付签名
-            success: (res)=> {
-              // 支付成功后的回调函数
-              alert('购买成功')
-            },
-            fail:(error)=>{
-              alert('支付失败')
-            },
-            cancel:(res)=>{
-              alert('用户取消支付')
-            }
-          })
-        })
-      },
+      // wxPayCard(cardId,price){
+      //   this.$post('/wechat/pay/payOrderByWechat',{
+      //     openId: localStorage.getItem('openId'),
+      //     orderId: cardId,
+      //     totalPrice: price
+      //   }).then(res=>{
+      //     console.log(res)
+      //     let payInfo = res
+      //     wx.chooseWXPay({
+      //       timestamp: payInfo.timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+      //       nonceStr: payInfo.nonceStr, // 支付签名随机串，不长于 32 位
+      //       package: payInfo.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+      //       signType: payInfo.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+      //       paySign: payInfo.paySign, // 支付签名
+      //       success: (res)=> {
+      //         // 支付成功后的回调函数
+      //         alert('购买成功')
+      //       },
+      //       fail:(error)=>{
+      //         alert('支付失败')
+      //       },
+      //       cancel:(res)=>{
+      //         alert('用户取消支付')
+      //       }
+      //     })
+      //   })
+      // },
 
       // 地理位置
       getUserLocation(){
         wx.getLocation({
           type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-          success:()=> {
+          success:(res)=> {
+            console.log('111111')
             console.log(res)
             let latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
             let longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
@@ -229,7 +231,8 @@
             // var accuracy = res.accuracy; // 位置精度
             this.locationInfo = {latitude:latitude,longitude:longitude}
             this.distance = this.getShortDistance(longitude,latitude,this.store.longitude,this.store.latitude)
-          },
+            console.log(this.distance)
+            },
           cancel: function (res) {
             alert('用户拒绝授权获取地理位置');
           }
@@ -267,7 +270,7 @@
     },
     mounted: function () {
       this.getStoreDetail()
-      this.getImg()
+      // this.getImg()
       this.wxConfig()
       this.getMyCard()
     }

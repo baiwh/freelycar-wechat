@@ -199,7 +199,7 @@
 
   .order-tracking-card-head
     border-bottom $border-gray
-    height h(145)
+    height h(160)
     box-sizing border-box
     padding h(38) w(32)
     span
@@ -209,7 +209,7 @@
         height w(25)
         margin-right w(7)
     p
-      width w(130)
+      width w(150)
       font-size w(18)
 
   .order-tracking-card-call
