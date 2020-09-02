@@ -56,14 +56,15 @@
       </div>
     </div>
 
-    <router-link to="/scanCode" v-show="(msg.length>0)?(msg[0].state>=3):true">
-      <button class="big-blue-btn">马上预约</button>
-    </router-link>
+    <div v-show="(msg.length>0)?(msg[0].state>=3):true">
+      <button class="big-blue-btn" @click="scan">扫码预约</button>
+    </div>
 
   </div>
 </template>
 
 <script>
+ import wx from 'weixin-js-sdk'
   export default {
     name: 'myOrder',
     data() {
@@ -78,7 +79,8 @@
         isCarImgShow:false,
         staffOrderImgUrl:'',
         noOrderShow:false,
-        arkSn:null
+        arkSn:null,
+        configInfo: {},
       }
     },
     methods: {
@@ -89,9 +91,15 @@
           type: 'ark',
           arkSn: this.arkSn
         }).then(res => {
-          this.msg = res
           console.log(res)
-          if (this.msg.length===0) this.noOrderShow=true
+          if(res != null){
+            this.msg = res
+            console.log(res)
+          }
+          if(this.msg.length === 0){
+            console.log(this.msg)
+            this.noOrderShow=true
+          }
         })
       },
 
@@ -169,9 +177,59 @@
           case 4:
             return '已取消订单'
         }
-      }
+      },
+      wxConfig() {
+        this.$get('/wechat/config/getJSSDKConfig',{
+            targetUrl:location.href
+          }
+        ).then(res => {
+          this.configInfo = res
+          console.log(res)
+          wx.config({
+            debug: false,
+            appId: this.configInfo.appId,
+            timestamp: this.configInfo.timestamp,
+            nonceStr: this.configInfo.nonceStr,
+            signature: this.configInfo.signature,
+            jsApiList: [
+              'checkJsApi',
+              'scanQRCode'
+            ]
+          })
+          // 需要检测的JS接口列表
+          wx.checkJsApi({
+            jsApiList: ['scanQRCode'],
+            success: function (res) {
+              console.log(res)
+            },
+            fail: function (error) {
+              console.log(error)
+            }
+          })
+          wx.ready(()=> {
+            this.info="正在打开扫一扫"
+            console.log('微信接口成功')
+          })
+          wx.error(function (res) {
+            console.log(res)
+          })
+        })
+      },
+
+      scan(){
+        //微信扫一扫
+        console.log('直接扫码')
+        wx.scanQRCode({
+          needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+          scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+          success: function (res) {
+            console.log(res)
+          }
+        })
+      },
     },
     mounted: function(){
+      this.wxConfig();
       if(localStorage.getItem('arkSn')==null){
         this.toast = this.$createToast({
             txt: '请扫码获取订单信息',
