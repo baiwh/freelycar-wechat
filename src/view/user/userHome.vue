@@ -54,7 +54,7 @@
       <router-link to="/store">
         <div class="menu">
           <img class="card-icon" src="../../assets/store.png" alt="会员卡">
-          <span>网点详情</span>
+          <span>服务商详情</span>
           <img class="more" src="../../assets/more.png" alt="详细">
         </div>
       </router-link>

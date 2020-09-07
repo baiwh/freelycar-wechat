@@ -6,6 +6,10 @@
     <div class="text3">{{arkInfo.text3}}</div>
     <div class="text4"><span>{{msg}}</span>{{arkInfo.text4}}</div>
     <div class="text5">{{arkInfo.text5}}</div>
+    <div class="btn" v-show="state=='tecGetKey'">
+      <mt-button type="primary"  @click="scan">扫码开柜</mt-button>
+      <mt-button type="primary"  @click="returnOrder">查看订单</mt-button>
+    </div>
   </div>
 </template>
 
@@ -16,7 +20,8 @@
     data() {
       return {
         arkInfo: {},
-        msg: null
+        msg: null,
+        state:'',
       }
     },
     props: [
@@ -26,14 +31,15 @@
       changeTxt(state){
         console.log('被调用success')
         console.log(state)
+        this.state=state
         switch (state) {
           case 'billingOrder': {
             console.log(this.arkInfoState)
             this.msg = null
             this.arkInfo = {
               text1: '预约成功',
-              text2: '我们已通知服务人员',
-              text3: '将在30分钟内为您服务',
+              text2: '我们已通知服务人员,请耐心等待',
+              text3: '若长时间没有技师接单，您可联系相应服务商',
               text4: '感谢您使用',
               text5: '小易智能柜预约服务！'
             }
@@ -73,7 +79,7 @@
               text2: '我们已通知服务车主订单状态',
               text3: '请尽快将车辆送往网点',
               text4: '',
-              text5: ''
+              text5: '',
             }
           }
             break
@@ -95,7 +101,6 @@
         }
         console.log(this.arkInfo)
       },
-
       // 倒数关闭
       closeWindow(){
         let info = setInterval(() => {
@@ -106,6 +111,9 @@
             clearInterval(info)
           }
         }, 1000)
+      },
+      returnOrder(){
+        window.location.reload();
       }
     },
     mounted: function () {
@@ -165,4 +173,16 @@
   .text5
     font-size w(25)
     top h(800)
+  .btn{
+    font-size w(40)
+    top h(800)
+  }
+  .mint-button--primary {
+    color: #fff;
+    background-color: #2049bf;
+    width w(400);
+    border-radius :w(100);
+    margin-bottom w(50)
+
+}
 </style>

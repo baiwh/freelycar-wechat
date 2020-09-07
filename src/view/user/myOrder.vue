@@ -27,7 +27,7 @@
       <div class="open-the-door" v-show="item.payState === 2 && item.state === 2">
         <img src="./../../assets/call-service.png" alt="">
         <a :href="['tel:' + storePhone]">
-          <span>联系客服</span>
+          <span>联系服务商</span>
         </a>
         <button @click="openDoor(item.id,item)">立即开柜</button>
       </div>
@@ -37,7 +37,7 @@
         <!--<span>￥{{item.actualPrice}}</span>-->
         <img src="./../../assets/call-service.png" alt="">
         <a :href="['tel:' + storePhone]">
-          <span class="payment-call-service">联系客服</span>
+          <span class="payment-call-service">联系服务商</span>
         </a>
         <button @click="orderDetail(item.id)">立即支付</button>
       </div>
@@ -230,17 +230,18 @@
     },
     mounted: function(){
       this.wxConfig();
-      if(localStorage.getItem('arkSn')==null){
+      if(localStorage.getItem('staffId')){
+        this.$router.push({path:'/order'})
+      }else if(localStorage.getItem('arkSn')==null){
         this.toast = this.$createToast({
             txt: '请扫码获取订单信息',
             type: 'txt'
           })
           this.toast.show()
+          // this.getOrderList();
       }else{
         this.arkSn=localStorage.getItem('arkSn')
-        if(localStorage.getItem('staffId')){
-          this.$router.push({path:'/order'})
-        }else if(localStorage.getItem('clientId')){
+        if(localStorage.getItem('clientId')){
           this.clientId = this.$route.query.id
           // this.storePhone = localStorage.getItem('storePhone')
           this.getOrderList()

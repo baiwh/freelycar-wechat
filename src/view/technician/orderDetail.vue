@@ -36,7 +36,7 @@
         <div>
           钥匙位置
           <span class="order-detail-key">
-            {{tabBar===0?consumerOrder.userKeyLocation:consumerOrder.staffKeyLocation}}
+            {{tabBar===1?consumerOrder.userKeyLocation:consumerOrder.staffKeyLocation}}
             <img src="./../../assets/position-blue2.png" alt />
           </span>
         </div>

@@ -122,6 +122,11 @@ export default new Router({
       path: '/carInfo',
       name: 'carInfo',
       component: resolve =>require(['@/view/user/carInfo.vue'],resolve),
+    },
+    {
+      path:'/service',
+      name:'service',
+      component: resolve => require(['@/view/user/service.vue'],resolve),
     }
   ],
   base:'/wechat/',

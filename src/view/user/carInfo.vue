@@ -13,6 +13,7 @@
           readonly="readonly"
           @click="ispopup"
         />
+        <img class="car-band" src="./../../assets/more.png" alt />
       </div>
       <!-- 车牌号城市缩写键盘 -->
       <mt-popup v-model="showpopup" position="bottom" popup-transition="popup-fade">
@@ -32,7 +33,7 @@
       <!-- 数字和字母键盘 -->
       <mt-popup v-model="shownumber" position="bottom" popup-transition="popup-fade">
         <div class="car-plate">
-          <div class="car-plate-container">
+          <div class="car-plate-container car-number">
             <mt-button
               class="plate-number-new"
               type="default"
@@ -45,6 +46,13 @@
           </div>
         </div>
       </mt-popup>
+
+      <!-- 车辆颜色 -->
+      <div class="form-box" @click="chooseColor">
+      <img class="user-info-sex" src="./../../assets/car-band.png" alt />
+        <input type="text" placeholder="请选择车辆颜色" v-model="color" />
+        <img class="car-band" src="./../../assets/more.png" alt />
+    </div>
 
       <div @click="showDrawer(licensePlate,clientId,storeId)" class="form-box">
         <img class="user-info-sex" src="./../../assets/car-band.png" alt />
@@ -91,6 +99,7 @@ export default {
       licensePlate: "",
       clientId: "",
       storeId: "",
+      color:"",
       chooseBrand: {},
       showpopup: false, //控制车牌号城市键盘
       shownumber: false, //数字字母键盘
@@ -172,6 +181,14 @@ export default {
         { name: "N", id: 62 },
         { name: "M", id: 63 },
       ],
+      colorList: [
+        { text: "黑色", value: "黑色" },
+        { text: "白色", value: "白色" },
+        { text: "红色", value: "红色" },
+        { text: "蓝色", value: "蓝色" },
+        { text: "银灰色", value: "银灰色" },
+        { text: "其他", value: "其他" },
+      ],
     };
   },
   methods: {
@@ -224,6 +241,20 @@ export default {
         },
       });
     },
+    // 选择车辆颜色
+    chooseColor(){
+      this.picker = this.$createPicker({
+        title: "请选择车辆颜色",
+        data: [this.colorList],
+        onSelect: this.selectHandle,
+        onCancel: this.cancelHandle,
+      });
+      this.picker.show();
+    },
+     // 选颜色确认按钮
+    selectHandle(selectedVal, selectedIndex, selectedText) {
+      this.color = selectedVal[0];
+    },
 
     // 提交
     addCar() {
@@ -236,7 +267,7 @@ export default {
           carType: "",
           miles: "0",
           lastMiles: "0",
-          color: "白色",
+          color: this.color,
           carImageUrl: this.carImageUrl,
         }).then((res) => {
           this.$router.push({ path: "/billingOrder" });
@@ -417,7 +448,7 @@ w(n) {
 
 .car-plate {
   width: 100% vw;
-  height: h(350);
+  height: h(450);
   position: relative;
 }
 
@@ -429,7 +460,10 @@ w(n) {
   right: 0;
   top: 0;
   bottom: 0;
-  margin: auto;
+  margin: 1vw auto -2vw auto;
+}
+.car-number{
+  margin: 5vw auto -5vw auto;
 }
 
 .plate-number {
@@ -439,6 +473,8 @@ w(n) {
   margin: 2vw;
   font-size: 14px;
   line-height: 14px;
+  border-radius:0px;
+  background-color: #ffffff;
 }
 
 .plate-number-new {
@@ -448,13 +484,18 @@ w(n) {
   margin: 1.5vw;
   font-size: 14px;
   line-height: 14px;
+  border-radius:0px;
+  background-color: #ffffff;
 }
 
 .plate-number-confirm {
+  width:23%;
   height: 15%;
   padding: 0;
   margin: 1.5vw;
   font-size: 14px;
   line-height: 14px;
+  border-radius:0px;
+  background-color: #ffffff;
 }
 </style>

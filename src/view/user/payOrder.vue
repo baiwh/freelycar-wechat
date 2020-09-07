@@ -1,7 +1,7 @@
 <template>
   <div class="pay-order">
     <!--非完工状态时显示-->
-    <div class="pay-order-card" v-show="consumerOrder.state !== 2">
+    <div class="pay-order-card">
       <!--一直显示-->
       <div class="pay-order-card-item">
         <span>订单编号</span>
@@ -11,14 +11,13 @@
                                                         v-clipboard:error="onError">复制</b></span>
       </div>
       <!--一直显示-->
-      <div class="pay-order-card-item">
+      <div class="pay-order-card-item" v-show="consumerOrder.state !== 2">
         <span>下单时间</span>
         <span class="pay-order-info-gray">{{consumerOrder.createTime}}</span>
       </div>
-      <!--支付后才显示-->
-      <div class="pay-order-card-item" v-show="consumerOrder.payState===2">
-        <span>支付方式</span>
-        <span class="pay-order-info-gray">{{consumerOrder.firstPayMethod | payWay}}</span>
+      <div class="pay-order-card-item" v-show="consumerOrder.state == 2">
+        <span>完工时间</span>
+        <span class="pay-order-info-gray">{{consumerOrder.finishTime}}</span>
       </div>
     </div>
 
@@ -32,9 +31,17 @@
         <span>车主信息</span>
         <span class="pay-order-info-gray">{{consumerOrder.clientName}}</span>
       </div>
-      <div class="pay-order-card-item" v-show="consumerOrder.state !== 2">
+      <div class="pay-order-card-item" v-show="consumerOrder.state == 2">
+        <span>钥匙位置</span>
+        <span class="pay-order-info-gray">{{consumerOrder.staffKeyLocation}}</span>
+      </div>
+      <div class="pay-order-card-item">
         <span>车辆位置</span>
         <span class="pay-order-info-gray">{{consumerOrder.parkingLocation}}</span>
+      </div>
+      <div class="pay-order-card-item" v-show="consumerOrder.state == 2">
+        <span>备注信息</span>
+        <span class="pay-order-info-gray">{{consumerOrder.commit}}</span>
       </div>
     </div>
 
@@ -48,14 +55,6 @@
         <!-- 修改为只有微信支付 -->
         <span class="pay-order-info-blue">{{payWayInfo}}</span>
       </div>
-      <!-- <div class="pay-order-card-item">
-        <span>卡内余额</span>
-        <span class="pay-order-info-blue">{{myCard.length>0?myCard[0].balance:0}}元</span>
-      </div> -->
-      <!--<div class="pay-order-card-item">-->
-        <!--<span>抵用券</span>-->
-        <!--<span class="pay-order-info-blue">已有2张<img class="pay-order-more" src="./../../assets/more.png" alt=""></span>-->
-      <!--</div>-->
     </div>
 
     <!--网点及项目-->
@@ -70,28 +69,15 @@
           <!--<span class="pay-order-info-yellow">￥{{item.price}}</span>-->
         </div>
       </div>
-      <!--<div class="pay-order-card-item">-->
-        <!--<span>抵扣</span>-->
-        <!--<span class="pay-order-info-yellow">???-￥10</span>-->
-      <!--</div>-->
-      <!--完工或交车时显示-->
-      <!-- 显示测试 -->
-      <!-- <div class="pay-order-card-item" > -->
-
       <div class="pay-order-card-item" v-show="consumerOrder.state===2||consumerOrder.state===3">
         <span class="pay-order-info-gray">总计￥{{consumerOrder.totalPrice}}
           <a :href="['tel:' + storeInfo.phone]">
-            <img class="call-service" src="./../../assets/call-service.png" alt=""><b class="pay-order-info-blue">联系店家</b>
+            <img class="call-service" src="./../../assets/call-service.png" alt=""><b class="pay-order-info-blue">联系服务商</b>
           </a>
         </span>
         <span>实付<b class="pay-order-info-yellow">￥{{payWayInfo==='微信支付'?consumerOrder.totalPrice:consumerOrder.memberPrice}}</b></span>
       </div>
     </div>
-
-    <!--完工且未支付时显示-->
-    <!-- 显示测试 -->
-    <!-- <div class="pay-order-button" > -->
-
     <div class="pay-order-button" v-show="consumerOrder.state===2&&consumerOrder.payState===1">
       <span class="pay-order-info-yellow">￥{{payWayInfo==='微信支付'||consumerOrder.firstPayMethod===2?consumerOrder.totalPrice:consumerOrder.memberPrice}}</span>
       <!--<span class="pay-order-info-yellow">￥{{consumerOrder.actualPrice}} <b class="pay-order-info-gray">??已优惠￥10</b></span>-->
@@ -129,12 +115,14 @@
         storeInfo:{}
       }
     },
+    // state状态：0预约 1 未完工 2 完工 3 未开柜
     methods: {
 //        获取订单详情
       getOrderDetail(){
         this.$get('/wechat/order/getOrderDetail',{
           id:this.orderId
         }).then(res=>{
+          console.log(res)
           this.consumerOrder=res.consumerOrder
           this.consumerProjectInfos=res.consumerProjectInfos
           this.storeInfo=res.store

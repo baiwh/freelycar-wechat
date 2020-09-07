@@ -2,6 +2,7 @@
   <div class="order-tracking">
     <div class="order-tracking-head">
       <span>{{title}}</span>
+      <div class="subtitle">{{subtitle}}</div>
     </div>
 
     <div class="order-tracking-card">
@@ -20,12 +21,11 @@
         </div>
       </div>
       <div class="order-tracking-card-button">
+        <a :href="['tel:' + storePhone]">
+          <span>联系服务商</span>
+        </a>
         <a href="tel:025-86697165">
           <span>联系客服</span>
-        </a>
-        <div></div>
-        <a :href="['tel:' + storePhone]">
-          <span>联系网点</span>
         </a>
       </div>
     </div>
@@ -60,6 +60,7 @@
         msg:[],
         consumerOrder:{},
         title:'',
+        subtitle:'',
         state:'',
         staffInfo:{},
         store:{},
@@ -97,18 +98,20 @@
             if(this.time[i]){
               let title=''
               let info=''
-              switch (i) {
+              switch (0) {
                 case 0:{
                   title='订单提交成功'
                   info='正在为您的爱车安排服务'
                   this.title='爱车正在安排服务'
+                  this.subtitle="若长时间没有技师接单，您可联系相应服务商"
                   this.state='已下单'
                   break
                 }
                 case 1:{
-                  title='接车已接车'
+                  title='已接车'
                   info='您的爱车由'+this.consumerOrder.pickCarStaffName+'接单'
                   this.title='爱车正送往网点'
+                  this.subtitle=null
                   this.state='已接车'
                   break
                 }
@@ -168,16 +171,21 @@
     position relative
 
   .order-tracking-head
-    height h(159)
+    height h(180)
     width 100vw
-    background url("./../../assets/head-bg.png") no-repeat
-    background-size 100% 100%
-    padding h(51) w(63)
+    background url("./../../assets/head-bg.png") no-repeat;
+    padding h(40) w(63)
     box-sizing border-box
     span
       color white
-      font-size w(41)
+      font-size w(50)
       font-weight 800
+  .subtitle{
+    font-size:w(30);
+    color:white;
+    font-weight  800
+    margin w(10) 0 
+  }
 
   .order-tracking-card
     width w(600)
@@ -187,7 +195,7 @@
     position absolute
     transform translate(-50%,0)
     left 50%
-    top h(140)
+    top h(160)
     background white
     padding w(20)
     box-sizing border-box
@@ -231,13 +239,12 @@
       left w(110)
 
   .order-tracking-card-button
-    padding h(13) 0
+    padding h(13) 6vw;
     display flex
     justify-content space-between
     align-items center
     span
       color #2049BF
-      margin 0 w(70)
     div
       background #ebebeb
       width 1px
@@ -246,7 +253,7 @@
   .order-tracking-time-line
     position relative
     top h(280)
-    padding 0 w(63)
+    padding w(20) w(63)
 
   .order-tracking-box
     position relative

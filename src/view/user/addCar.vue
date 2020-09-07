@@ -29,7 +29,7 @@
     <!-- 数字和字母键盘 -->
     <mt-popup v-model="shownumber" position="bottom" popup-transition="popup-fade">
       <div class="car-plate">
-        <div class="car-plate-container">
+        <div class="car-plate-container car-number">
           <mt-button
             class="plate-number-new"
             type="default"
@@ -419,7 +419,7 @@ w(n) {
 
 .car-plate {
   width: 100% vw;
-  height: h(350);
+  height: h(450);
   position: relative;
 }
 
@@ -432,6 +432,7 @@ w(n) {
   top: 0;
   bottom: 0;
   margin: auto;
+  margin: 1vw auto -2vw auto;
 }
 
 .plate-number {
@@ -441,6 +442,8 @@ w(n) {
   margin: 2vw;
   font-size: 14px;
   line-height: 14px;
+  border-radius:0px;
+  background-color: #ffffff;
 }
 
 .plate-number-new {
@@ -450,13 +453,21 @@ w(n) {
   margin: 1.5vw;
   font-size: 14px;
   line-height: 14px;
+  border-radius:0px;
+  background-color: #ffffff;
 }
 
 .plate-number-confirm {
+  width:23%;
   height: 15%;
   padding: 0;
   margin: 1.5vw;
   font-size: 14px;
   line-height: 14px;
+  border-radius:0px;
+  background-color: #ffffff;
+}
+.car-number{
+  margin: 5vw auto -5vw auto;
 }
 </style>

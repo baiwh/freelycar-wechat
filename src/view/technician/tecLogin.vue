@@ -11,10 +11,12 @@
         <input type="password" placeholder="请输入账号密码" v-model="password">
       </div>
       <div class="btn">
-        <router-link to="/login">
-          <button class="switch-user">用户登录</button>
-        </router-link>
         <button :class="loginBtn" @click="logIn">登录</button>
+      </div>
+      <div class="userbtn">
+         <router-link to="/login">
+          <button>用户登录</button>
+        </router-link>
       </div>
     </div>
 
@@ -173,10 +175,10 @@
             //console.log('未授权')
 
             //开发
-            // window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3A%2F%2Fwww.freelycar.cn%2Fwechat%2FtecLogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect"
+            window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3A%2F%2Fwww.freelycar.cn%2Fwechat%2FtecLogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect"
 
             // 部署
-            window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3A%2F%2Fwww.freelycar.com%2Fwechat%2FtecLogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect"
+            // window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3A%2F%2Fwww.freelycar.com%2Fwechat%2FtecLogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect"
 
           }
 
@@ -277,11 +279,12 @@
 
   .btn
     display flex
+    width:100%;
     justify-content center
 
   .btn button
     height h(70)
-    width w(300)
+    width w(500)
     margin w(116) w(28)
     border-radius h(35)
     border 0 solid
@@ -296,4 +299,11 @@
 
   .login-btn-gray
     background-color darkgray
+  .userbtn{
+  margin-top:w(80);
+}
+.userbtn button{
+  font-size:w(28);
+  color #a9a9a9
+}
 </style>

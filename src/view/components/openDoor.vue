@@ -2,7 +2,7 @@
   <div class="open-door">
     <img class="open-door-img" src="./../../assets/open-door.png" alt="">
     <span>{{arkInfo.text1}}</span>
-    <span>{{arkInfo.text2}}</span>
+    <span>{{arkInfo.text2}}<br>{{arkInfo.text3}}</span>
     <div class="open-door-loading">
       <img class="open-door-car" src="./../../assets/loading-car.png" alt="">
       <div></div>
@@ -26,25 +26,25 @@
     ],
     methods: {
       changeTxt(state,doorSn){
-        switch (state){
+        switch ('tecFinish'){
           case 'billingOrder':{
-            this.arkInfo={text1:doorSn+'号柜门正在打开，请勿离开', text2:'柜门打开，请放入钥匙，并关闭柜门'}
+            this.arkInfo={text1:doorSn+'号柜门正在打开，请勿离开', text2:'柜门打开，请放入钥匙，并关闭柜门',text3:''}
           }
             break
           case 'cancelOrder':{
-            this.arkInfo={text1:doorSn+'打开，请取走钥匙，并关闭柜门', text2:''}
+            this.arkInfo={text1:doorSn+'打开，请取走钥匙，并关闭柜门', text2:'',text3:''}
           }
             break
           case 'payOrder':{
-            this.arkInfo={text1:doorSn+'打开，请取走钥匙，并关闭柜门', text2:'谢谢您的支持！'}
+            this.arkInfo={text1:doorSn+'打开，请取走钥匙，并关闭柜门', text2:'谢谢您的支持！',text3:''}
           }
             break
           case 'tecGetKey':{
-            this.arkInfo={text1:doorSn+'正在打开，请勿离开', text2:'柜门打开，请取走钥匙，并关闭柜门'}
+            this.arkInfo={text1:doorSn+'正在打开，请勿离开', text2:'柜门打开，请取走钥匙，并关闭柜门',text3:''}
           }
             break
           case 'tecFinish':{
-            this.arkInfo={text1:doorSn+'号柜门已打开', text2:'请将钥匙放入柜内，并关闭柜门'}
+            this.arkInfo={text1:doorSn+'号柜门已打开', text2:'请将钥匙放入柜内，并关闭柜门',text3:'柜门关闭后选择“确认完工”完成订单'}
           }
             break
         }
@@ -83,6 +83,7 @@
   .open-door span
     color #2049BF
     font-size w(24)
+    text-align center
 
   .open-door-img
     height h(184)

@@ -19,10 +19,12 @@
         <div class="password-info" :class="getCodeInfo" @click="getCode">{{passwordInfo}}</div>
       </div>
       <div class="btn">
-        <router-link to="/tecLogin">
-          <button class="switch-user">技师登录</button>
-        </router-link>
         <button :class="loginBtn" @click="logIn">登录</button>
+      </div>
+      <div class="tecbtn">
+        <router-link to="/tecLogin">
+          <button>技师登录</button>
+        </router-link>
       </div>
     </div>
   </div>
@@ -232,8 +234,8 @@ export default {
       } else {
         //console.log('未授权')
         // 开发
-        // window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect'
-        window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
+        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect'
+        // window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
         // 线上
       }
     },
@@ -403,12 +405,13 @@ w(n) {
 .btn {
   display: flex;
   justify-content: center;
+  width:100%;
   margin: w(116) 0;
 }
 
 .btn button {
   height: h(70);
-  width: w(300);
+  width: w(500);
   border-radius: h(35);
   border: 0 solid;
   color: white;
@@ -426,5 +429,12 @@ w(n) {
 
 .login-btn-gray {
   background-color: darkgray;
+}
+.tecbtn{
+  margin-top:w(80);
+}
+.tecbtn button{
+  font-size:w(28);
+  color #a9a9a9
 }
 </style>

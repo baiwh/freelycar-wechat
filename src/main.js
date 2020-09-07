@@ -11,7 +11,8 @@ import 'mint-ui/lib/style.css';
 import VueClipboard from 'vue-clipboard2'
 import openDoor from './view/components/openDoor'
 import success from './view/components/success'
-
+import {scan} from "./components/scanCode"
+Vue.prototype.scan = scan
 Vue.use(VueClipboard)
 Vue.config.productionTip = false
 // 引入cube

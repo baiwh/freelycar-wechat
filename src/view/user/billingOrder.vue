@@ -40,7 +40,7 @@
       <textarea
         v-model="consumerOrder.parkingLocation"
         class="billing-order-position-input"
-        placeholder="请描述车辆停放的详细位置！"
+        placeholder="请尽可能准确输入位置，方便技师取车！"
         cols="38"
         rows="3"
       ></textarea>
@@ -50,7 +50,6 @@
         <span>
           <img class="billing-order-img" src="./../../assets/img.png" alt />上传爱车照片
         </span>
-        <span class="billing-order-position-button">建议上传车辆位置图片</span>
       </div>
       <!--<cube-upload v-show="!isImgShow"-->
       <cube-upload
@@ -67,8 +66,21 @@
       <!--<img v-show="isImgShow" class="billing-order-car-img" :src="carImageUrl" alt="">-->
       <!--<img class="billing-order-photo-add" src="./../../assets/add-img.png" alt="">-->
       <!--<img v-show="isImgShow" class="del-img" src="./../../assets/del-img.png" alt="" @click="delImg">-->
+      <div class="tip">您可以上传能显示车辆位置的照片</div>
     </div>
+    <div class="billing-order-card billing-order-position">
+      <div class="align-center">
+        <span>备注信息</span>
+      </div>
 
+      <textarea
+        v-model="consumerOrder.commit"
+        class="billing-order-position-input"
+        placeholder="您可填写期望换车位置信息！"
+        cols="38"
+        rows="2"
+      ></textarea>
+    </div>
     <div class="align-center billing-order-protocol color-blue">
       <span @click="changeAgreeState">
         <img
@@ -218,6 +230,8 @@ export default {
         carId: "",
         clientId: "",
         parkingLocation: "",
+        //新增备注信息
+        commit:""
       },
       consumerProjectInfos: [],
       clientOrderImg: {
@@ -678,6 +692,7 @@ w(n) {
   border-bottom: $border-gray;
   padding-right: w(43);
   box-sizing: border-box;
+  position:relative
 }
 
 .billing-order-img {
@@ -749,9 +764,6 @@ w(n) {
   bottom: h(20);
 }
 
-.billing-order-position {
-  height: h(250);
-}
 
 .billing-order-position-button {
   font-size: w(26);
@@ -774,6 +786,14 @@ w(n) {
 
 .billing-order-photo div {
   height: h(103);
+}
+.billing-order-photo .tip{
+  height:h(25);
+  font-size:10px;
+  position absolute
+  bottom:0;
+  left:0;
+  color:#aeaeae;
 }
 
 .billing-order-photo-add {
