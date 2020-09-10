@@ -101,7 +101,7 @@
               :src="[checkedId.indexOf(item.id)!==-1?'./static/check-yellow.png':'./static/check-no.png']"
               alt
             />
-            <span>{{item.name}}</span>
+            <div class="item">{{item.name}}</div>
             <span
               class="billing-order-dialog-item-price"
             >{{item.standard===0?'运费：':''}}￥{{item.price}}</span>
@@ -823,9 +823,6 @@ w(n) {
   color: red;
 }
 
-.is-old {
-  color: #AFAEAE;
-}
 
 .billing-order-dialog-content {
   height: h(594);
@@ -835,6 +832,7 @@ w(n) {
   .billing-order-dialog-item {
     padding: h(30) w(30) h(30) 0;
     border-bottom: $border-gray;
+    position:relative;
 
     div {
       width: w(450);
@@ -842,6 +840,20 @@ w(n) {
       margin-top: h(20);
       font-size: w(25);
     }
+    .item{
+      font-size:w(30)
+      width:w(350);
+      position:absolute;
+      top:w(10);
+      left:0;
+      padding-left:w(10)
+    }
+    .is-old {
+      color: #AFAEAE;
+      position:relative;
+      top:w(18);
+      left:0;
+}
   }
 
   .billing-order-dialog-item-price {
