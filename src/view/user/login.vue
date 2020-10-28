@@ -118,6 +118,7 @@ export default {
             "&nickName=" +
             this.userInfo.nickname
         ).then((res) => {
+          console.log(res.wxUserInfo)
           this.wxUserInfo = res.wxUserInfo;
           // this.axios.defaults.headers.common["Authorization"] = res.jwt
           localStorage.setItem("jwt", res.jwt);
@@ -127,18 +128,15 @@ export default {
           localStorage.setItem("openId", this.wxUserInfo.openId);
           localStorage.setItem("storeId", this.wxUserInfo.defaultStoreId);
           localStorage.setItem("storeName", this.wxUserInfo.defaultStoreName);
+          localStorage.setItem("storeAddress",this.wxUserInfo.defaultStoreAddress);
           localStorage.setItem("trueName", this.wxUserInfo.trueName);
           localStorage.setItem("Authorization", "Bearer " + res.jwt);
-          // 判断是否存在柜子码
+          // // 判断是否存在柜子码
           if (localStorage.getItem("arkSn")) {
             // 检查柜子信息，看是否需要换网点
             this.getArkInfo();
           } else {
-            if (!this.wxUserInfo.defaultStoreId) {
-              this.$router.push({ path: "/chooseStore" });
-            } else {
               this.$router.push({ path: "/userHome" });
-            }
           }
         });
       } else {

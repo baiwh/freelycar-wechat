@@ -26,7 +26,7 @@
     ],
     methods: {
       changeTxt(state,doorSn){
-        switch ('tecFinish'){
+        switch (state){
           case 'billingOrder':{
             this.arkInfo={text1:doorSn+'号柜门正在打开，请勿离开', text2:'柜门打开，请放入钥匙，并关闭柜门',text3:''}
           }

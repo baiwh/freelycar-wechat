@@ -96,9 +96,9 @@
           console.log(this.time)
           for(let i=0;i<this.time.length;i++){
             if(this.time[i]){
-              let title=''
-              let info=''
-              switch (0) {
+              let title='';
+              let info='';
+              switch (i) {
                 case 0:{
                   title='订单提交成功'
                   info='正在为您的爱车安排服务'
@@ -115,16 +115,16 @@
                   this.state='已接车'
                   break
                 }
-//                case 2:{
-//                  title='订单完成'
-//                  info='正在为您的爱车安排服务'
-//                  break
-//                }
-//                case 3:{
-//                  title='已取车'
-//                  info='正在为您的爱车安排服务'
-//                  break
-//                }
+               case 2:{
+                 title='订单完成'
+                 info='正在为您的爱车安排服务'
+                 break
+               }
+               case 3:{
+                 title='已取车'
+                 info='正在为您的爱车安排服务'
+                 break
+               }
               }
               this.msg.push({
                 date:this.time[i].split(' ')[0],
@@ -134,6 +134,7 @@
               })
             }
           }
+          console.log(this.msg)
         })
       },
 

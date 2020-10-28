@@ -3,10 +3,10 @@
     <div class="billing-order-card billing-order-user align-center">
       <span>
         <img class="billing-order-img" src="./../../assets/name1.png" alt />
-        {{msg.name}}
+        {{ msg.name }}
       </span>
       <span @click="changeCar" class="billing-order-user-info">
-        {{msg.number}}
+        {{ msg.number }}
         <img src="./../../assets/change.png" alt />
         <b>切换</b>
       </span>
@@ -15,40 +15,55 @@
     <div class="billing-order-card billing-order-project">
       <div class="align-center">
         <span>
-          <img class="billing-order-img" src="./../../assets/setting-blue.png" alt />
+          <img
+            class="billing-order-img"
+            src="./../../assets/setting-blue.png"
+            alt
+          />
           <span class="mark">*</span>本次预约项目
         </span>
         <button @click="chooseProject">项目选择</button>
       </div>
       <span
         class="billing-order-project-item"
-        v-for="(item,index) in consumerProjectInfos"
+        v-for="(item, index) in consumerProjectInfos"
         :key="index"
-      >{{item.projectName}}</span>
+        >{{ item.projectName }}</span
+      >
       <!--<span class="billing-order-project-count">合计费用： {{trueOrderPrice}}元</span>-->
     </div>
 
     <div class="billing-order-card billing-order-position">
       <div class="align-center">
         <span>
-          <img class="billing-order-img" src="./../../assets/position-blue.png" alt />
+          <img
+            class="billing-order-img"
+            src="./../../assets/position-blue.png"
+            alt
+          />
           <span class="mark">*</span>车辆所在位置
         </span>
-        <span class="billing-order-position-button" @click="addLocation">快速定位</span>
+        <span class="billing-order-position-button" @click="addLocation"
+          >快速定位</span
+        >
       </div>
 
       <textarea
         v-model="consumerOrder.parkingLocation"
         class="billing-order-position-input"
         placeholder="请尽可能准确输入位置，方便技师取车！"
-        cols="38"
+        cols="40"
         rows="3"
       ></textarea>
     </div>
     <div class="billing-order-card billing-order-photo">
       <div class="align-center">
         <span>
-          <img class="billing-order-img" src="./../../assets/img.png" alt />上传爱车照片
+          <img
+            class="billing-order-img"
+            src="./../../assets/img.png"
+            alt
+          />上传爱车照片
         </span>
       </div>
       <!--<cube-upload v-show="!isImgShow"-->
@@ -74,9 +89,9 @@
       </div>
 
       <textarea
-        v-model="consumerOrder.commit"
+        v-model="consumerOrder.comment"
         class="billing-order-position-input"
-        placeholder="您可填写期望换车位置信息！"
+        placeholder="您可填写期望还车位置信息！"
         cols="38"
         rows="2"
       ></textarea>
@@ -85,12 +100,14 @@
       <span @click="changeAgreeState">
         <img
           class="billing-order-img"
-          :src="[isAgree?'./static/checked.png':'./static/no-checked.png']"
+          :src="[isAgree ? './static/checked.png' : './static/no-checked.png']"
           alt
         />
         <span class="mark">*</span>同意
       </span>
-      <span class="open-protocol" @click="openProtocol">《小易智能柜使用协议》</span>
+      <span class="open-protocol" @click="openProtocol"
+        >《小易智能柜使用协议》</span
+      >
     </div>
 
     <button class="submit-btn" @click="submit">提交</button>
@@ -99,26 +116,56 @@
     <div class="dialog-layer" v-show="isDialogShow">
       <div class="dialog-box billing-order-dialog">
         <div class="billing-order-dialog-header">
-          <span>{{storeName}}</span>
+          <span class="store-color">{{ storeName }}</span>
           <img @click="closeDialog" src="./../../assets/close-black.png" alt />
         </div>
         <div class="billing-order-dialog-content">
+          <!-- 服务商 -->
           <div
-            @click="selectProject(index)"
-            :class="[item.comment==='***新用户专享***'?'billing-order-dialog-item':'billing-order-dialog-item',{active:!item.staffReady}]"
-            v-for="(item,index) in projects"
-            :key="index"
+            class="billing-order-dialog-content-list"
+            v-for="(item, serviceindex) in service"
+            :key="serviceindex"
+            v-show="item.staffReady"
           >
-            <img
-              :src="[checkedId.indexOf(item.id)!==-1?'./static/check-yellow.png':'./static/check-no.png']"
-              alt
-            />
-            <span>{{item.name}}</span>
-            <span
-              class="billing-order-dialog-item-price"
-            >{{item.standard===0?'运费：':''}}￥{{item.price}}</span>
-            <!-- <div class="member-price" v-show="item.memberPrice||item.memberPrice===0"><span>会员价</span><span>￥{{item.memberPrice}}</span></div> -->
-            <div :class="[item.comment==='***新用户专享***'?'is-new':'is-old']">{{item.comment}}</div>
+            <div class="service">
+              <span>{{ item.name }}</span>
+            </div>
+            <!-- {active:!item.staffReady} -->
+            <div
+              @click="selectProject(serviceindex, projectItem)"
+              :class="[
+                projectItem.comment === '***新用户专享***'
+                  ? 'billing-order-dialog-item'
+                  : 'billing-order-dialog-item',
+              ]"
+              v-for="(projectItem, index) in item.projects"
+              :key="index"
+            >
+              <img
+                :src="[
+                  checkedId.indexOf(projectItem.id) !== -1
+                    ? './static/check-yellow.png'
+                    : './static/check-no.png',
+                ]"
+                alt
+              />
+              <span>{{ projectItem.name }}</span>
+              <span class="billing-order-dialog-item-price"
+                >{{ projectItem.standard === 0 ? "运费：" : "" }}￥{{
+                  projectItem.price
+                }}</span
+              >
+              <!-- <div class="member-price" v-show="item.memberPrice||item.memberPrice===0"><span>会员价</span><span>￥{{item.memberPrice}}</span></div> -->
+              <div
+                :class="[
+                  projectItem.comment === '***新用户专享***'
+                    ? 'is-new'
+                    : 'is-old',
+                ]"
+              >
+                {{ projectItem.comment }}
+              </div>
+            </div>
           </div>
         </div>
         <div class="billing-order-dialog-footer">
@@ -134,7 +181,11 @@
       <div class="dialog-box billing-order-dialog">
         <div class="billing-order-dialog-header">
           <span>小易智能柜使用协议</span>
-          <img @click="closeProtocol" src="./../../assets/close-black.png" alt />
+          <img
+            @click="closeProtocol"
+            src="./../../assets/close-black.png"
+            alt
+          />
         </div>
         <div class="billing-order-dialog-content">
           "欢迎您使用小易智能柜（以下简称“小易”）软件及服务！
@@ -178,11 +229,11 @@
           <br />3.3产品使用规范
           <br />3.3.1除非法律允许或小易书面许可，您使用本产品服务过程中不得从事下列行为：
           <br />1）对本软件产品进行反向工程、反向汇编、反向编译，或者以其他方式尝试发现本软件产品的源代码；
-          <br />2） 对本软件产品或者本软件产品运行过程中释放到任何终端内存中的数据、软件运行过程中客户端与服务器端的交互数据，以及本软件产品运行所必需的系统数据，进行复制、修改、增加、删除、挂接运行或创作任何衍生作品，形式包括但不限于使用插件、外挂或非小易经授权的第三方工具/服务接入本软件和相关系统；
+          <br />2）
+          对本软件产品或者本软件产品运行过程中释放到任何终端内存中的数据、软件运行过程中客户端与服务器端的交互数据，以及本软件产品运行所必需的系统数据，进行复制、修改、增加、删除、挂接运行或创作任何衍生作品，形式包括但不限于使用插件、外挂或非小易经授权的第三方工具/服务接入本软件和相关系统；
           <br />3）自行或者授权他人、第三方软件对本软件产品及其组件、模块、数据进行干扰。
           <br />3.3.2您理解并同意，基于用户体验、相关服务平台运营安全、平台规则要求及健康发展等综合因素，小易有权选择提供服务的对象，有权决定功能设置，有权决定功能开发、数据接口和相关数据披露的对象和范围。针对以下情况，有权视具体情况中止或终止提供本服务，包括但不限于：
-          <br />1）违反法律法规或本协议规定的；
-          <br />2）影响服务体验的；
+          <br />1）违反法律法规或本协议规定的； <br />2）影响服务体验的；
           <br />3）存在安全隐患的；
           <br />4）违背小易及其服务平台运营原则，或不符合小易其他管理要求的。
           <br />3.4对自己的行为负责
@@ -208,8 +259,16 @@
       </div>
     </div>
 
-    <open-door ref="openDoor" :ark-info-state="arkInfoState" v-show="isOpenDoorShow"></open-door>
-    <success ref="successArk" :ark-info-state="arkInfoState" v-show="isSuccessShow"></success>
+    <open-door
+      ref="openDoor"
+      :ark-info-state="arkInfoState"
+      v-show="isOpenDoorShow"
+    ></open-door>
+    <success
+      ref="successArk"
+      :ark-info-state="arkInfoState"
+      v-show="isSuccessShow"
+    ></success>
   </div>
 </template>
 
@@ -231,7 +290,7 @@ export default {
         clientId: "",
         parkingLocation: "",
         //新增备注信息
-        commit:""
+        comment: "",
       },
       consumerProjectInfos: [],
       clientOrderImg: {
@@ -241,6 +300,7 @@ export default {
         orderId: "",
         url: "",
       },
+      service: [],
       projects: [],
       sortprojects: [],
       wxUserInfo: {},
@@ -261,7 +321,7 @@ export default {
       newUser: "",
       //图片上传action
       action: {
-        target:'https://www.freelycar.com/api/upload/clientOrderImg',
+        target: "https://www.freelycar.com/api/upload/clientOrderImg",
         // target: "http://192.168.0.168/api/upload/clientOrderImg",
         prop: "base64Value",
       },
@@ -305,7 +365,7 @@ export default {
     },
     // 获取用户信息
     getUserInfo() {
-      this.$get("/wechat/wxuser/getPersonalInfo", {
+      this.$get("/wechat/wxuser/getCurrentPersonalInfo", {
         id: localStorage.getItem("id"),
       }).then((res) => {
         this.wxUserInfo = res.wxUserInfo;
@@ -345,12 +405,13 @@ export default {
 
     // 获取网点服务列表
     getStoreProject(newUser) {
-      this.$get("/wechat/ark/getProjects", {
+      this.$get("/wechat/ark/getRspProjects", {
         storeId: localStorage.getItem("storeId"),
         newUser: newUser,
       }).then((res) => {
         console.log(res);
         this.projects = res;
+        this.service = res;
         //按照sort排序
         console.log(this.projects);
         this.projects = this.sortByKey(this.projects, "sort");
@@ -398,19 +459,19 @@ export default {
     },
 
     // 选择项目
-    selectProject(index) {
+    selectProject(serviceindex, item) {
       // 检测项目能不能选
-      console.log(this.projects[index].staffReady);
-      if (this.projects[index].staffReady) {
+      console.log(this.projects[serviceindex].staffReady);
+      if (this.projects[serviceindex].staffReady) {
         this.consumerProjectList = [
           {
-            price: this.projects[index].price,
-            projectId: this.projects[index].id,
-            projectName: this.projects[index].name,
-            memberPrice: this.projects[index].memberPrice,
+            price: item.price,
+            projectId: item.id,
+            projectName: item.name,
+            memberPrice: item.memberPrice,
           },
         ];
-        this.checkedId = [this.projects[index].id];
+        this.checkedId = [item.id];
         /**   多选功能暂时不用
           // 购物车consumerProjectList。全部列表projects
           // 先看购物车里有没有点击的这个，
@@ -445,6 +506,7 @@ export default {
     selectProjectBtn() {
       // 赋值给正主consumerProjectInfos
       this.consumerProjectInfos = this.consumerProjectList;
+      console.log(this.consumerProjectInfos);
       this.idList = this.checkedId;
       this.closeDialog();
     },
@@ -485,6 +547,21 @@ export default {
           },
         });
         wx.ready(function () {
+          wx.onMenuShareAppMessage({
+            title: "点击下单", // 分享标题
+            desc: "测试柜子", // 分享描述
+            link: window.location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: "", // 分享图标  这个图片地址需要填写绝对路径 www.xxx.com/images/xxx.jpg
+            type: "link", // 分享类型,music、video或link，不填默认为link
+            dataUrl: "", // 如果type是music或video，则要提供数据链接，默认为空
+            success: function () {
+              // 用户确认分享后执行的回调函数
+              console.log('分享到朋友圈接口')
+            },
+            cancel: function () {
+              // 用户取消分享后执行的回调函数
+            },
+          });
           console.log("微信接口成功");
         });
         wx.error(function (res) {
@@ -549,6 +626,7 @@ export default {
           this.submitBilling(res.id);
         })
         .catch((err) => {
+          console.log("111");
           alert("下单失败，请勿放入钥匙");
           this.submitOrder = false;
           this.isOpenDoorShow = false;
@@ -600,6 +678,7 @@ export default {
     },
   },
   mounted: function () {
+    console.log(window.location.href)
     if (this.$route.query.arkSn) {
       this.arkSn = this.$route.query.arkSn;
       localStorage.setItem("arkSn", this.$route.query.arkSn);
@@ -647,7 +726,7 @@ h(n) {
 }
 
 w(n) {
-  (n / 7.5vw);
+  ((n / 7.5vw));
 }
 
 .open-protocol {
@@ -692,7 +771,7 @@ w(n) {
   border-bottom: $border-gray;
   padding-right: w(43);
   box-sizing: border-box;
-  position:relative
+  position: relative;
 }
 
 .billing-order-img {
@@ -764,6 +843,9 @@ w(n) {
   bottom: h(20);
 }
 
+.store-color {
+  color: #2049bf;
+}
 
 .billing-order-position-button {
   font-size: w(26);
@@ -787,13 +869,14 @@ w(n) {
 .billing-order-photo div {
   height: h(103);
 }
-.billing-order-photo .tip{
-  height:h(25);
-  font-size:10px;
-  position absolute
-  bottom:0;
-  left:0;
-  color:#aeaeae;
+
+.billing-order-photo .tip {
+  height: h(25);
+  font-size: 10px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: #aeaeae;
 }
 
 .billing-order-photo-add {
@@ -858,10 +941,14 @@ w(n) {
 
     div {
       width: w(450);
-      margin-left: w(60);
+      margin-left: w(70);
       margin-top: h(20);
       font-size: w(25);
     }
+  }
+
+  .billing-order-dialog-content-list {
+    margin-top: h(20);
   }
 
   .billing-order-dialog-item-price {
@@ -872,7 +959,7 @@ w(n) {
   img {
     height: w(30);
     width: w(30);
-    margin: 0 w(20);
+    margin: 0 0 0 w(30);
   }
 }
 
@@ -929,5 +1016,13 @@ w(n) {
 .mark-text {
   font-size: w(24);
   color: red;
+}
+
+.service {
+  font-size: w(32);
+  padding-left: 4vw;
+  height: h(60);
+  border-bottom: 1px solid #ebebeb;
+  line-height: h(60);
 }
 </style>

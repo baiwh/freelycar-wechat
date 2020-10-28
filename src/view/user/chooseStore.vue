@@ -40,6 +40,7 @@
         this.chooseStore = index
         this.storeId = this.storeList[index].id
         this.isChooseName = this.storeList[index].name
+        this.address = this.storeList[index].address
         this.submit()
       },
 
@@ -52,6 +53,7 @@
           localStorage.setItem('storeName',this.isChooseName)
           localStorage.setItem('storeId',this.storeId)
           localStorage.setItem('clientId',res.defaultClientId)
+          localStorage.setItem('storeAddress',this.address);
           this.$router.push({path:'/userHome'})
         })
       }

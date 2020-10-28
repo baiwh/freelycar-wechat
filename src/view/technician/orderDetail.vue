@@ -42,7 +42,7 @@
         </div>
         <div>
           停放位置
-          <span>{{consumerOrder.parkingLocation}}</span>
+          <span >{{consumerOrder.parkingLocation}}</span>
         </div>
       </div>
 
@@ -190,7 +190,7 @@ export default {
         console.log(res);
         this.orderInfo = res;
         this.consumerOrder = res.consumerOrder;
-        this.carImageUrl = this.orderInfo.clientOrderImg.url;
+        this.carImageUrl = this.orderInfo.clientOrderImgs[0]?this.orderInfo.clientOrderImgs[0].url:'';
       });
     },
 

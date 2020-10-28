@@ -39,9 +39,9 @@
         <span>车辆位置</span>
         <span class="pay-order-info-gray">{{consumerOrder.parkingLocation}}</span>
       </div>
-      <div class="pay-order-card-item" v-show="consumerOrder.state == 2">
+      <div class="pay-order-card-item" >
         <span>备注信息</span>
-        <span class="pay-order-info-gray">{{consumerOrder.commit}}</span>
+        <span class="pay-order-info-gray">{{consumerOrder.comment}}</span>
       </div>
     </div>
 
@@ -124,6 +124,7 @@
         }).then(res=>{
           console.log(res)
           this.consumerOrder=res.consumerOrder
+          console.log(this.consumerOrder)
           this.consumerProjectInfos=res.consumerProjectInfos
           this.storeInfo=res.store
           this.storeInfo.Detail = res.ark.location
@@ -267,7 +268,7 @@
           this.configInfo = res
           wx.config({
             debug: false,
-            appId: this.configInfo.appId,
+            appId: this.configInfo.appId, 
             timestamp: this.configInfo.timestamp,
             nonceStr: this.configInfo.nonceStr,
             signature: this.configInfo.signature,
@@ -298,6 +299,7 @@
       // 支付
       toPayOrder(){
         console.log('支付')
+        
         if(this.consumerOrder.actualPrice){
         //先判断支付方式
         //只保留微信支付

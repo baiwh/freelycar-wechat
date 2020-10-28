@@ -1,28 +1,53 @@
 <template>
   <div class="order">
     <div class="order-tab">
-      <cube-tab-bar v-model="selectedLabelDefault" :data="tabs" show-slider @click="clickHandler"></cube-tab-bar>
+      <cube-tab-bar
+        v-model="selectedLabelDefault"
+        :data="tabs"
+        show-slider
+        @click="clickHandler"
+      ></cube-tab-bar>
     </div>
 
     <!--待服务订单-->
-    <div v-show="tabBar==='待服务'" v-for="(item,index) in orderList" :key="index">
+    <div
+      v-show="tabBar === '待接单'"
+      v-for="(item, index) in orderList"
+      :key="index"
+    >
       <div class="order-card">
         <div class="order-card-head">
           <img src="./../../assets/car-head.png" alt />
-          <b>订单号：{{item.id}}</b>
-          <span>{{item.licensePlate}} {{item.carColor}} · {{item.carBrand}}</span>
+          
+          <b>订单号：{{ item.id }}</b>
+          <span
+            >{{ item.licensePlate }} {{ item.carColor }} ·
+            {{ item.carBrand }}</span
+          >
           <button
-            @click="takeOrder(item.id,item.keyLocation)"
-            :class="[!orderProcessing?'bg-blue':'bg-gray']"
-          >接单</button>
+            @click="takeOrder(item.id, item.keyLocation)"
+            :class="[!orderProcessing ? 'bg-blue' : 'bg-gray']"
+          >
+            接单
+          </button>
         </div>
         <!-- <div class="order-card-info" @click="orderDetail(item.id,item.arkSn)"> -->
         <div class="order-card-info">
-          <div>车主姓名<span> {{item.clientName}}</span></div>
-          <div>下单时间<span> {{item.createTime}}</span></div>
-          <div>预约项目<b>{{item.projectNames}}</b></div>
-          <div>钥匙位置<span> {{item.keyLocation}}</span></div>
-          <div>车辆停放位置<span> {{item.parkingLocation}}</span></div>
+          <div>
+            车主姓名<span> {{ item.clientName }}</span>
+          </div>
+          <div>
+            下单时间<span> {{ item.createTime }}</span>
+          </div>
+          <div>
+            预约项目<b>{{ item.projectNames }}</b>
+          </div>
+          <div>
+            钥匙位置<span> {{ item.keyLocation }}</span>
+          </div>
+          <div>
+            车辆停放位置<span> {{ item.parkingLocation }}</span>
+          </div>
           <div class="order-detail-other">
             <span @click="showCarImg">
               <img src="./../../assets/my-car-img.png" alt />车辆照片
@@ -45,74 +70,57 @@
             alt
           />
           <img :src="item.carImageUrl" class="dialog-car-img" alt />
-          <div v-show="!item.carImageUrl" class="dialog-box-black-text">车主未上传照片</div>
+          <div v-show="!item.carImageUrl" class="dialog-box-black-text">
+            车主未上传照片
+          </div>
         </div>
       </div>
     </div>
 
     <!--服务中订单-->
-    <div v-show="tabBar==='服务中'">
+    <div v-show="tabBar === '服务中'">
       <div
         class="order-card"
-        v-for="(item,index) in myOrderList"
-        v-show="getkey"
-        @click="myOrderDetail(item.id,item.arkSn,item.userKeyLocationSn,item.userKeyLocation)"
+        v-for="(item, index) in myOrderList"
+        v-show="item.state == '1'"
+        @click="
+          myOrderDetail(
+            item.id,
+            item.arkSn,
+            item.userKeyLocationSn,
+            item.userKeyLocation
+          )
+        "
         :key="index"
       >
         <div class="order-card-head">
           <img src="./../../assets/car-head.png" alt />
-          <b>订单号：{{item.id}}</b>
-          <span>{{item.licensePlate}} {{item.carColor}} · {{item.carBrand}}</span>
-        </div>
-        <div class="order-card-myorder">
-          <div>
-            预约项目
-            <span>{{item.projectNames}}</span>
-          </div>
-          <div>
-            接单时间
-            <span>{{item.pickTime}}</span>
-          </div>
-          <div>
-            订单状态
-            <span>已接车</span>
-          </div>
-          <button :class="[item.userKeyLocationSn.split('-')[0]===arkSn?'orange':'gray']">确认完工</button>
-        </div>
-        <img class="order-card-myorder-more" src="./../../assets/more.png" alt />
-      </div>
-      <!-- 新增接单状态 -->
-      <div
-        class="order-card order-card-scan"
-        v-for="item in myOrderList"
-        v-show="!getkey"
-        :key="item.id"
-      >
-        <div class="order-card-head">
-          <img src="./../../assets/car-head.png" alt />
-          <b>订单号：{{item.id}}</b>
-          <span>{{item.licensePlate}} {{item.carColor}} · {{item.carBrand}}</span>
+          <b>订单号：{{ item.id }}</b>
+          <span
+            >{{ item.licensePlate }} {{ item.carColor }} ·
+            {{ item.carBrand }}</span
+          >
         </div>
         <div class="order-card-myorder">
           <div>
             车主姓名
-            <span>{{item.clientName}}</span>
+            <span>{{ item.clientName }}</span>
           </div>
           <div>
             接单时间
-            <span>{{item.pickTime}}</span>
+            <span>{{ item.pickTime }}</span>
           </div>
           <div>
             预约项目
-            <span>{{item.projectNames}}</span>
+            <b>{{ item.projectNames }}</b>
           </div>
           <div>
             钥匙位置
-            <span>{{item.userKeyLocation}}</span>
+            <span>{{ item.userKeyLocation }}</span>
           </div>
           <div>
             车辆位置
-            <span>{{item.parkingLocation}}</span>
+            <span>{{ item.parkingLocation }}</span>
           </div>
           <div class="order-detail-other">
             <span @click="showCarImg">
@@ -122,7 +130,69 @@
               <img src="./../../assets/call-service.png" alt />联系车主
             </span>
           </div>
-          <button class="order-close" @click="cancelOrder">取消接单</button>
+          <button
+            :class="[
+              item.userKeyLocationSn.split('-')[0] === arkSn
+                ? 'orange'
+                : 'gray',
+            ]"
+          >
+            确认完工
+          </button>
+        </div>
+        <img
+          class="order-card-myorder-more"
+          src="./../../assets/more.png"
+          alt
+        />
+      </div>
+      <!-- 新增接单状态 -->
+      <div
+        class="order-card order-card-scan"
+        v-for="item in myOrderList"
+        v-show="item.state == '-1'"
+        :key="item.id"
+      >
+        <div class="order-card-head">
+          <img src="./../../assets/car-head.png" alt />
+          <b>订单号：{{ item.id }}</b>
+          <span
+            >{{ item.licensePlate }} {{ item.carColor }} ·
+            {{ item.carBrand }}</span
+          >
+        </div>
+        <div class="order-card-myorder">
+          <div>
+            车主姓名
+            <span>{{ item.clientName }}</span>
+          </div>
+          <div>
+            接单时间
+            <span>{{ item.orderTakingTime }}</span>
+          </div>
+          <div>
+            预约项目
+            <b>{{ item.projectNames }}</b>
+          </div>
+          <div>
+            钥匙位置
+            <span>{{ item.userKeyLocation }}</span>
+          </div>
+          <div>
+            车辆位置
+            <span>{{ item.parkingLocation }}</span>
+          </div>
+          <div class="order-detail-other">
+            <span @click="showCarImg">
+              <img src="./../../assets/my-car-img.png" alt />车辆照片
+            </span>
+            <span @click="callUser(item)">
+              <img src="./../../assets/call-service.png" alt />联系车主
+            </span>
+          </div>
+          <button class="order-close" @click="cancelOrder(item.id)">
+            取消接单
+          </button>
           <button class="order-scan" @click="scan">扫码开柜</button>
         </div>
         <div class="dialog-layer" v-show="isCarImgShow">
@@ -134,41 +204,61 @@
               alt
             />
             <img :src="item.carImageUrl" class="dialog-car-img" alt />
-            <div v-show="!item.carImageUrl" class="dialog-box-black-text">车主未上传照片</div>
+            <div v-show="!item.carImageUrl" class="dialog-box-black-text">
+              车主未上传照片
+            </div>
           </div>
         </div>
       </div>
     </div>
     <!-- 已完成 -->
-    <div v-show="tabBar==='已完成'">
+    <div v-show="tabBar === '已完成'">
       <div v-show="!msg.length">暂无历史订单</div>
-      <div class="order-card" v-for="(item,index) in msg" :key="index">
+      <div class="order-card" v-for="(item, index) in msg" :key="index">
         <div class="order-card-head">
-        <img src="./../../assets/car-head.png" alt />
-          <b>订单号：{{item.id}}</b>
-         <span>{{item.licensePlate}} {{item.carColor}} · {{item.carBrand}}</span>
+          <img :src="item.carImageUrl==''?'/wechat/static/img/car-head.35ecc33.png':item.carImageUrl" alt />
+          <b>订单号：{{ item.id }}</b>
+          <span
+            >{{ item.licensePlate }} {{ item.carColor }} ·
+            {{ item.carBrand }}</span
+          >
         </div>
-        <span v-clipboard:copy="item.id"
-              v-clipboard:success="onCopy"
-              v-clipboard:error="onError" class="history-order-copy">复制</span>
+        <span
+          v-clipboard:copy="item.id"
+          v-clipboard:success="onCopy"
+          v-clipboard:error="onError"
+          class="history-order-copy"
+          >复制</span
+        >
         <div class="order-card-myorder">
-          <div>车主姓名<span>123</span></div>
-          <div>完工时间<span>123</span></div>
-          <div>预约项目 <b>123</b></div>
-          <div>钥匙位置<span>123</span></div>
-          <div>停放位置<span>123</span></div>
-          <div>支付状态<span>123</span></div>
+          <div>车主姓名<span>{{item.clientName}}</span></div>
+          <div>完工时间<span>{{item.finishTime}}</span></div>
+          <div>预约项目 <b>{{item.projectNames}}</b></div>
+          <div>钥匙位置<span>{{item.keyLocation}}</span></div>
+          <div>停放位置<span>{{item.parkingLocation}}</span></div>
+          <div>支付状态<span>{{item.payState}}</span></div>
         </div>
-        
       </div>
     </div>
 
     <!--开门成功-->
-    <open-door ref="openDoor" :ark-info-state="arkInfoState" v-show="isOpenDoorShow"></open-door>
-    <success ref="success" :ark-info-state="arkInfoState" v-show="isSuccessShow"></success>
+    <open-door
+      ref="openDoor"
+      :ark-info-state="arkInfoState"
+      v-show="isOpenDoorShow"
+    ></open-door>
+    <success
+      ref="success"
+      :ark-info-state="arkInfoState"
+      v-show="isSuccessShow"
+    ></success>
 
     <div class="history-order-search">
-      <input v-model="search" type="text" placeholder="请输入订单号或车牌号来搜索订单" />
+      <input
+        v-model="search"
+        type="text"
+        placeholder="请输入订单号或车牌号来搜索订单"
+      />
       <img @click="getOrders" src="./../../assets/search.png" alt />
     </div>
   </div>
@@ -181,10 +271,10 @@ export default {
   data() {
     return {
       msg: [],
-      selectedLabelDefault: "待服务",
+      selectedLabelDefault: "待接单",
       tabs: [
         {
-          label: "待服务",
+          label: "待接单",
         },
         {
           label: "服务中",
@@ -196,7 +286,7 @@ export default {
       search: "",
       orderList: [],
       myOrderList: [],
-      tabBar: "待服务",
+      tabBar: "待接单",
       arkSn: "",
       isOpenDoorShow: false,
       isSuccessShow: false,
@@ -213,8 +303,7 @@ export default {
     getOrders() {
       this.$get("/wechat/order/listReservationOrders", {
         licensePlate: this.search,
-        storeId: localStorage.getItem("storeId"),
-        staffId: localStorage.getItem("staffId"),
+        employeeId: localStorage.getItem("employeeId"),
       }).then((res) => {
         console.log(res);
         this.orderList = res;
@@ -228,8 +317,7 @@ export default {
     getFinishOrders() {
       this.$get("/wechat/order/listServicingOrders", {
         licensePlate: this.search,
-        storeId: localStorage.getItem("storeId"),
-        staffId: localStorage.getItem("staffId"),
+        employeeId: localStorage.getItem("employeeId"),
       }).then((res) => {
         console.log(res);
         this.myOrderList = res;
@@ -240,8 +328,8 @@ export default {
     // 获取订单列表
     getOrderList() {
       this.$get("/wechat/employee/listHistoryOrders", {
-        staffId: localStorage.getItem("staffId"),
-        keyword: this.keyword,
+        employeeId: localStorage.getItem("employeeId"),
+        // keyword: this.keyword,
       }).then((res) => {
         this.msg = res;
         console.log(res);
@@ -312,6 +400,12 @@ export default {
         this.toast.show();
       } else {
         //修改为先接单再扫码开柜的状态
+        this.$get("/wechat/ark/orderTaking", {
+          orderId: id,
+          employeeId: localStorage.getItem("employeeId"),
+        }).then((res) => {
+          console.log("接单成功");
+        });
         window.scrollTo(0, 0);
         this.arkInfoState = "tecGetKey";
         this.$refs.success.changeTxt("tecGetKey");
@@ -327,15 +421,9 @@ export default {
 
     // 接车的一键开柜
     pickOpen(id, keyLocation) {
-      window.scrollTo(0, 0);
-      this.arkInfoState = "tecGetKey";
-      let local = keyLocation.split("-");
-      this.$refs.openDoor.changeTxt("tecGetKey", local[1]);
-      this.$refs.success.changeTxt("tecGetKey");
-      this.isOpenDoorShow = true;
       this.$get("/wechat/ark/pickCar", {
         orderId: id,
-        staffId: localStorage.getItem("staffId"),
+        employeeId: localStorage.getItem("employeeId"),
       }).then((res) => {
         this.isSuccessShow = true;
         setTimeout(() => {
@@ -363,7 +451,7 @@ export default {
     },
 
     //取消订单
-    cancelOrder() {
+    cancelOrder(id) {
       this.$createDialog({
         type: "confirm",
         title: "提示",
@@ -381,34 +469,89 @@ export default {
           href: "javascript:;",
         },
         onConfirm: () => {
-          window.location.reload();
+          this.$get("/wechat/ark/cancelOrderTaking", {
+            orderId: id,
+            employeeId: localStorage.getItem("employeeId"),
+          }).then((res) => {
+            this.toast = this.$createToast({
+              txt: "取消成功",
+              type: "txt",
+            });
+            this.toast.show();
+            window.location.reload();
+          });
         },
         onCancel: () => {
           console.log("取消");
         },
       }).show();
     },
-    onCopy(){
-        this.toast = this.$createToast({
-          txt: '复制成功',
-          type: 'txt'
+    onCopy() {
+      this.toast = this.$createToast({
+        txt: "复制成功",
+        type: "txt",
+      });
+      this.toast.show();
+    },
+    onError() {
+      this.toast = this.$createToast({
+        txt: "复制失败",
+        type: "txt",
+      });
+      this.toast.show();
+    },
+    // 微信注入权限
+      wxConfig() {
+        this.$get('/wechat/config/getJSSDKConfig',{
+            targetUrl:location.href
+          }
+        ).then(res => {
+          this.configInfo = res
+          console.log(res)
+          wx.config({
+            debug: false,
+            appId: this.configInfo.appId,
+            timestamp: this.configInfo.timestamp,
+            nonceStr: this.configInfo.nonceStr,
+            signature: this.configInfo.signature,
+            jsApiList: [
+              'checkJsApi',
+              'scanQRCode'
+            ]
+          })
+          // 需要检测的JS接口列表
+          wx.checkJsApi({
+            jsApiList: ['scanQRCode'],
+            success: function (res) {
+              console.log(res)
+            },
+            fail: function (error) {
+              console.log(error)
+            }
+          })
+          wx.ready(()=> {
+            console.log('微信接口成功')
+          })
+          wx.error(function (res) {
+            console.log(res)
+          })
         })
-        this.toast.show()
       },
-      onError(){
-        this.toast = this.$createToast({
-          txt: '复制失败',
-          type: 'txt'
+      scan(){
+        //微信扫一扫
+        console.log('直接扫码')
+        wx.scanQRCode({
+          needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+          scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+          success: function (res) {
+            console.log("res")
+          }
         })
-        this.toast.show()
       },
-
-    // changeHandler (label) {
-    //   // if you clicked different tab, this methods can be emitted
-    //   console.log(label)
-    // }
   },
   mounted: function () {
+    this.wxConfig();
+    this.getOrders();
     this.getFinishOrders();
     this.getOrderList(); //已接到
     this.arkSn = localStorage.getItem("arkSn");
@@ -426,7 +569,7 @@ h(n) {
 }
 
 w(n) {
-  (n / 7.5vw);
+  ((n / 7.5vw));
 }
 
 .order {
@@ -481,7 +624,7 @@ w(n) {
 
 .order-card {
   background: white;
-  height: h(420);
+  height: h(440);
   width: w(727);
   margin: w(12);
   padding: 0 w(29);
@@ -547,11 +690,13 @@ w(n) {
     padding: h(3) w(19);
     margin-right: w(10);
     border-radius: w(25);
-    float:right;
+    float: right;
   }
-  span{
-    float:right;
+
+  span {
+    float: right;
   }
+
   div {
     margin-bottom: h(25);
   }
@@ -585,12 +730,13 @@ w(n) {
   span {
     float: right;
   }
+
   b {
     border: 1px solid #2049BF;
     color: #2049BF;
     padding: h(3) w(19);
     border-radius: w(25);
-    float:right;
+    float: right;
   }
 
   button {
@@ -655,7 +801,7 @@ w(n) {
   line-height: h(90);
   text-align: center;
   position: absolute;
-  top:w(10)
+  top: w(10);
   right: w(33);
 }
 

@@ -51,7 +51,7 @@
     </div> -->
 
     <div>
-      <router-link to="/store">
+      <router-link to="/service">
         <div class="menu">
           <img class="card-icon" src="../../assets/store.png" alt="会员卡">
           <span>服务商详情</span>
@@ -84,24 +84,31 @@
         isEditCar:false,
         storePhone:'025-86697165',
         storeName:'',
-        cardBalance:null
+        cardBalance:null,
+        service:"",
+        newUser:"",
       }
     },
     methods: {
       // 获取个人信息
       getAllInfo(){
-        this.$get('/wechat/wxuser/getPersonalInfo',{
+        this.$get('/wechat/wxuser/getCurrentPersonalInfo',{
           id:localStorage.getItem('id')
         }).then(res=>{
           this.wxUserInfo=res.wxUserInfo
+          this.newUser = res.newUser;
+          localStorage.setItem("newUser", this.newUser);
+          console.log(res)
           this.cars=res.cars
           this.cardBalance=res.cardBalance
+          
         })
       },
 
       editCar(){
         this.isEditCar = !this.isEditCar
       },
+
 
       // 删除车
       delCar(index){
@@ -129,7 +136,7 @@
       if(localStorage.getItem('staffId')){
         this.$router.push({path:'/tecHome'})
       }else if(localStorage.getItem('clientId')){
-        this.storeName=localStorage.getItem('storeName')
+        this.storeName=localStorage.getItem('storeName')?localStorage.getItem('storeName'):"暂无"
         this.getAllInfo()
       }else {
         this.$router.push({path:'/login'})

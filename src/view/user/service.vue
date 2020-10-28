@@ -1,37 +1,46 @@
 <template>
   <div>
-    <div class="header">
+    <div class="header" v-show="storeShow">
       <div class="header-info">
         <i class="cubeic-home"></i>
-        <span>徐庄·软件园</span>
+        <span>{{storeName}}</span>
       </div>
       <div class="header-little">
         <i class="cubeic-navigation"></i>
-        <span>徐庄·软件园停车场</span>
+        <span>{{storeAddress}}</span>
       </div>
     </div>
-    <div class="container">
+    <div class="header" v-show="!storeShow">
+      <div class="header-nostore">
+        <i class="cubeic-home"></i>
+        <span>暂未选择</span>
+      </div>
+    </div>
+    <div class="container" v-show="storeShow">
       <div class="store-service">
-        <div v-for="(item,index) in store" :key="index">
+        <div v-for="(serviceitem,index) in serviceList" :key="index">
           <div class="store-service-item-title flex-center" @click="openOrCloseProject(index)">
-            <span>{{item.servicename}}</span>
-            <img :src="item.show?'./static/up.png':'./static/down.png'" alt />
+            <span>{{serviceitem.name}}</span>
+            <img :src="serviceitem.show?'./static/up.png':'./static/down.png'" alt />
           </div>
           <div
-            v-show="item.show"
-            v-for="(projectItem,projuctIndex) in item.serviceproject"
+            v-show="serviceitem.show"
+            v-for="(projectItem,projuctIndex) in serviceitem.projects"
             class="flex-center store-service-item"
             :key="projuctIndex"
           >
             <div>
-              <span class="store-service-items">{{projectItem.project}}</span>
+              <span class="store-service-items">{{projectItem.name}}</span>
             </div>
             <div>
-              <span class="store-service-price">￥100</span>
+              <span class="store-service-price">￥{{projectItem.price}}</span>
             </div>
           </div>
         </div>
       </div>
+    </div>
+    <div class="no-store" v-show="!storeShow">
+      对不起，您暂未选择网点
     </div>
   </div>
 </template>
@@ -42,27 +51,40 @@ export default {
   data() {
     return {
       serviceList: [],
-      store: [
-        {
-          servicename: "服务商A",
-          serviceproject: [{ project: "普洗A" }, { project: "普洗B" }],
-          show:true
-        },
-        {
-          servicename: "服务商B",
-          serviceproject: [{ project: "打蜡" }, { project: "精洗B" },],
-          show:true
-        },
-      ],
       projects: [],
       projectListIndex: 'all',
+      newUser:false,
+      storeName:'',
+      storeAddress:'',
+      storeShow:false
     };
   },
   methods: {
     openOrCloseProject(index) {
-        this.store[index].show =!this.store[index].show;
+        this.serviceList[index].show =!this.serviceList[index].show;
     },
+    getServiceData(newUser){
+      this.$get("/wechat/ark/getRspProjects",{
+        storeId: localStorage.getItem("storeId"),
+        newUser: newUser,
+      }).then((res)=>{
+        console.log(res)
+        for(var i in res){
+          res[i].show = true;
+        }
+        this.serviceList = res;
+      })
+    }
   },
+  mounted(){
+    this.newUser = localStorage.getItem("newUser");
+    if(localStorage.getItem("storeId")){
+      this.storeShow = true
+      this.storeName = localStorage.getItem("storeName");
+      this.storeAddress = localStorage.getItem("storeAddress");
+    }
+    this.getServiceData(this.newUser);
+  }
 };
 </script>
 
@@ -86,6 +108,15 @@ w(n) {
   height: 22px;
   padding: h(50) h(40) h(40);
   font-size: 22px;
+  color: #ffffff;
+  font-family: sans-serif;
+  vertical-align: middle;
+}
+
+.header-nostore{
+  height: 27px;
+  padding: h(70) h(40) h(40);
+  font-size: 27px;
   color: #ffffff;
   font-family: sans-serif;
   vertical-align: middle;
@@ -135,7 +166,7 @@ w(n) {
 .store-service-item-title {
   height: h(74);
   padding: 0 w(40);
-  font-size: w(26);
+  font-size: w(35);
 
   b {
     color: #858585;
@@ -165,4 +196,9 @@ w(n) {
     position absolute
     right w(44)
     top h(35)
+.no-store{
+  height:400px;
+  line-height 400px;
+  text-align center
+}
 </style>

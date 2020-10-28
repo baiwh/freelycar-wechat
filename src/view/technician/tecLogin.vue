@@ -61,37 +61,13 @@
     },
     methods: {
 
-      // 选择网点
-      chooseStore(){
-        this.picker = this.$createPicker({
-          title: '请选择服务网点',
-          data: [this.pickerList],
-          onSelect: this.selectHandle,
-          onCancel: this.cancelHandle
-        })
-        this.picker.show()
-      },
-
-//      确认选择的网点
-      selectHandle(selectedVal, selectedIndex, selectedText) {
-        this.$post('/wechat/employee/selectStore',{
-          id:localStorage.getItem('employeeId'),
-          defaultStoreId:selectedVal[0],
-          defaultStaffId:this.staffList[selectedIndex].id
-        }).then(res=>{
-          localStorage.setItem('staffId',this.staffList[selectedIndex].id)
-          localStorage.setItem('storeId',selectedVal[0])
-          localStorage.setItem('storeName',selectedText[0])
-          this.$router.push({path:'/order'})
-        })
-      },
-
       // 登录
       logIn(){
         this.$post('/wechat/employee/login',{
           account:this.account,
           password:this.password,
           openId:this.userInfo.openid,
+          // openId:"oBaSqs8HZFzGxJpZGePKt1kkckOk",
           nickName:this.userInfo.nickname,
           phone:this.account,
           headImgUrl:this.userInfo.headimgurl,
@@ -100,6 +76,7 @@
           city:"南京"
         }).then(res=>{
           // this.axios.defaults.headers.common["Authorization"] = res.jwt
+          console.log(res)
           localStorage.setItem('jwt',res.jwt)
           localStorage.setItem('employeeId',res.employee.id)
           localStorage.setItem('province',res.employee.province)
@@ -110,12 +87,11 @@
           localStorage.setItem('headImgUrl',res.employee.headImgUrl)
           localStorage.setItem('openId',res.employee.openId)
           localStorage.setItem('Authorization', "Bearer " + res.jwt)
+
           this.staffList=res.staffList
-          this.staffList.map(item=>{
-            this.pickerList.push({text:item.storeName,value:item.storeId})
-          })
-//          选择网点
-          this.chooseStore()
+          console.log(this.staffList)
+
+          this.$router.push({path:'/order'})
         })
       },
 
