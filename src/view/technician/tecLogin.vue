@@ -66,8 +66,8 @@
         this.$post('/wechat/employee/login',{
           account:this.account,
           password:this.password,
-          openId:this.userInfo.openid,
-          // openId:"oBaSqs8HZFzGxJpZGePKt1kkckOk",
+          // openId:this.userInfo.openid,
+          openId:"oBaSqs8HZFzGxJpZGePKt1kkckOk",
           nickName:this.userInfo.nickname,
           phone:this.account,
           headImgUrl:this.userInfo.headimgurl,

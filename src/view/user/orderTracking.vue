@@ -10,7 +10,7 @@
         <div>
           <img src="./../../assets/head.png" alt="">
           <span>{{consumerOrder.pickCarStaffName}}</span>
-          <a :href="['tel:' + staffPhone]">
+          <a :href="['tel:' + staffPhone]" v-show="consumerOrder.pickCarStaffName">
             <span class="order-tracking-card-call"><img src="./../../assets/call-service.png" alt=""><b>联系技师</b></span>
           </a>
         </div>
@@ -89,10 +89,11 @@
 
           this.time=[
             this.consumerOrder.createTime,
-            this.consumerOrder.pickTime
+            this.consumerOrder.orderTakingTime,
+            this.consumerOrder.pickTime,
+           this.consumerOrder.deliverTime,
+           this.consumerOrder.finishTime,
           ];
-//          this.consumerOrder.finishTime,
-//            this.consumerOrder.deliverTime
           console.log(this.time)
           for(let i=0;i<this.time.length;i++){
             if(this.time[i]){
@@ -108,6 +109,14 @@
                   break
                 }
                 case 1:{
+                  title='已接单'
+                  info='正在为您的爱车安排服务'
+                  this.title='爱车正在安排服务'
+                  this.subtitle="若技师长时间未取车，您可联系相应技师"
+                  this.state='已接单'
+                  break
+                }
+                case 2:{
                   title='已接车'
                   info='您的爱车由'+this.consumerOrder.pickCarStaffName+'接单'
                   this.title='爱车正送往网点'
@@ -115,12 +124,12 @@
                   this.state='已接车'
                   break
                 }
-               case 2:{
+               case 3:{
                  title='订单完成'
                  info='正在为您的爱车安排服务'
                  break
                }
-               case 3:{
+               case 4:{
                  title='已取车'
                  info='正在为您的爱车安排服务'
                  break
@@ -237,7 +246,7 @@
     p
       position absolute
       top h(45)
-      left w(110)
+      left w(110) 
 
   .order-tracking-card-button
     padding h(13) 6vw;

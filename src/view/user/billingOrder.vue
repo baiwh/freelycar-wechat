@@ -71,7 +71,7 @@
         ref="upload"
         :action="action"
         :simultaneous-uploads="1"
-        :max="1"
+        :max="3"
         @file-removed="fileRemoved"
         @file-success="fileSuccess"
         :process-file="processFile"
@@ -123,9 +123,9 @@
           <!-- 服务商 -->
           <div
             class="billing-order-dialog-content-list"
+            :class="[{active:!item.staffReady}]"
             v-for="(item, serviceindex) in service"
             :key="serviceindex"
-            v-show="item.staffReady"
           >
             <div class="service">
               <span>{{ item.name }}</span>
@@ -293,12 +293,11 @@ export default {
         comment: "",
       },
       consumerProjectInfos: [],
+      clientOrderImgs:[],
       clientOrderImg: {
         createTime: "",
-        delStatus: false,
-        id: 1,
-        orderId: "",
         url: "",
+        id:'',
       },
       service: [],
       projects: [],
@@ -431,15 +430,23 @@ export default {
     fileSuccess(e) {
       console.log("----");
       console.log(e);
-      this.carImageUrl = e.response.data.url;
-      this.clientOrderImg.url = e.response.data.url;
+      let client={}
+      client.url = e.response.data.url;
+      client.id = e.response.data.id;
+      this.clientOrderImgs.push(client);
+      console.log(this.clientOrderImgs)
       // this.isImgShow = true
     },
 
     // 删除图片
-    fileRemoved() {
-      this.carImageUrl = "";
-      this.clientOrderImg.url = "";
+    fileRemoved(e) {
+      console.log(e);
+      for(var i in this.clientOrderImgs){
+        if(this.clientOrderImgs[i].id == e.response.data.id){
+          this.clientOrderImgs.splice(i,1);
+        }
+      }
+      console.log(this.clientOrderImgs)
     },
 
     // 选择项目按钮
@@ -639,7 +646,7 @@ export default {
         consumerOrder: this.consumerOrder,
         consumerProjectInfos: this.consumerProjectInfos,
         doorId: id,
-        clientOrderImg: this.clientOrderImg,
+        clientOrderImgs: this.clientOrderImgs,
       })
         .then((res) => {
           this.$refs.successArk.changeTxt("billingOrder");
@@ -946,11 +953,7 @@ w(n) {
       font-size: w(25);
     }
   }
-
-  .billing-order-dialog-content-list {
-    margin-top: h(20);
-  }
-
+  
   .billing-order-dialog-item-price {
     float: right;
     color: #FFBD03;

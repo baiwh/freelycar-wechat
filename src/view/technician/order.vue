@@ -49,7 +49,7 @@
             车辆停放位置<span> {{ item.parkingLocation }}</span>
           </div>
           <div class="order-detail-other">
-            <span @click="showCarImg">
+            <span @click="showCarImg(item)">
               <img src="./../../assets/my-car-img.png" alt />车辆照片
             </span>
             <span @click="callUser(item)">
@@ -61,20 +61,6 @@
         </div>
       </div>
       <!-- 查看图片模态框 -->
-      <div class="dialog-layer" v-show="isCarImgShow">
-        <div class="dialog-box-black my-order-dialog-box">
-          <img
-            src="./../../assets/close.png"
-            @click="showCarImg"
-            class="dialog-box-black-close"
-            alt
-          />
-          <img :src="item.carImageUrl" class="dialog-car-img" alt />
-          <div v-show="!item.carImageUrl" class="dialog-box-black-text">
-            车主未上传照片
-          </div>
-        </div>
-      </div>
     </div>
 
     <!--服务中订单-->
@@ -83,14 +69,6 @@
         class="order-card"
         v-for="(item, index) in myOrderList"
         v-show="item.state == '1'"
-        @click="
-          myOrderDetail(
-            item.id,
-            item.arkSn,
-            item.userKeyLocationSn,
-            item.userKeyLocation
-          )
-        "
         :key="index"
       >
         <div class="order-card-head">
@@ -123,7 +101,7 @@
             <span>{{ item.parkingLocation }}</span>
           </div>
           <div class="order-detail-other">
-            <span @click="showCarImg">
+            <span @click="showCarImg(item)">
               <img src="./../../assets/my-car-img.png" alt />车辆照片
             </span>
             <span @click="callUser(item)">
@@ -136,15 +114,18 @@
                 ? 'orange'
                 : 'gray',
             ]"
+            @click="
+          myOrderDetail(
+            item.id,
+            item.arkSn,
+            item.userKeyLocationSn,
+            item.userKeyLocation
+          )
+        "
           >
             确认完工
           </button>
         </div>
-        <img
-          class="order-card-myorder-more"
-          src="./../../assets/more.png"
-          alt
-        />
       </div>
       <!-- 新增接单状态 -->
       <div
@@ -183,7 +164,7 @@
             <span>{{ item.parkingLocation }}</span>
           </div>
           <div class="order-detail-other">
-            <span @click="showCarImg">
+            <span @click="showCarImg(item)">
               <img src="./../../assets/my-car-img.png" alt />车辆照片
             </span>
             <span @click="callUser(item)">
@@ -194,20 +175,6 @@
             取消接单
           </button>
           <button class="order-scan" @click="scan">扫码开柜</button>
-        </div>
-        <div class="dialog-layer" v-show="isCarImgShow">
-          <div class="dialog-box-black my-order-dialog-box">
-            <img
-              src="./../../assets/close.png"
-              @click="showCarImg"
-              class="dialog-box-black-close"
-              alt
-            />
-            <img :src="item.carImageUrl" class="dialog-car-img" alt />
-            <div v-show="!item.carImageUrl" class="dialog-box-black-text">
-              车主未上传照片
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -240,6 +207,22 @@
         </div>
       </div>
     </div>
+    <div class="dialog-layer" v-show="isCarImgShow">
+          <div class="dialog-box-black my-order-dialog-box">
+            <img
+              src="./../../assets/close.png"
+              @click="showCarImg('')"
+              class="dialog-box-black-close"
+              alt
+            />
+            <img :src="carImageUrl" class="dialog-car-img" alt />
+            <i class="cubeic-back imgfont imgfont-left" @click="changeImgIndex('-1')"></i>
+            <i class="cubeic-arrow imgfont imgfont-right" @click="changeImgIndex('1')"></i>
+            <div v-show="!carImageUrl" class="dialog-box-black-text">
+              车主未上传照片
+            </div>
+          </div>
+        </div>
 
     <!--开门成功-->
     <open-door
@@ -294,7 +277,10 @@ export default {
       orderProcessing: false,
       isCarImgShow: false,
       // 车辆图片
+      carImageUrls:[],
       carImageUrl: "",
+      imglength:'',
+      imgindex:'',
       getkey: false,
     };
   },
@@ -357,9 +343,33 @@ export default {
       }
     },
     // 获取车辆照片
-    showCarImg() {
+    showCarImg(item) {
       // console.log(item)
+      if(item && item.carImageUrl){
+        this.carImageUrls = item.carImageUrl.split( ',' );
+        this.imglength = this.carImageUrls.length;
+        this.carImageUrl = this.carImageUrls[0];
+        this.imgindex= 0;
+        console.log(this.carImageUrl)
+      }else if(item && item.clientOrderImgUrl){
+        this.carImageUrls = item.clientOrderImgUrl.split( ',' );
+        this.imglength = this.carImageUrls.length;
+        this.carImageUrl = this.carImageUrls[0];
+        this.imgindex= 0;
+      }
+      else{
+        this.carImageUrl="";
+      }
       this.isCarImgShow = !this.isCarImgShow;
+    },
+    changeImgIndex(index){
+      if(index=='-1'){
+        this.carImageUrl = this.carImageUrls[(this.imgindex-1+this.imglength)%this.imglength]
+        this.imgindex = (this.imgindex-1+this.imglength)%this.imglength
+      }else if(index=="1"){
+        this.carImageUrl = this.carImageUrls[(this.imgindex+1+this.imglength)%this.imglength]
+        this.imgindex = (this.imgindex+1+this.imglength)%this.imglength
+      }
     },
 
     //联系车主
@@ -838,5 +848,19 @@ w(n) {
   bottom: w(-60);
   right: w(170);
   background-color: #2049bf;
+}
+.imgfont{
+  color white;
+  font-size w(90)
+}
+.imgfont-left{
+  position absolute
+  left h(-60)
+  top h(400)
+}
+.imgfont-right{
+  position absolute
+  right h(-60)
+  top h(400)
 }
 </style>

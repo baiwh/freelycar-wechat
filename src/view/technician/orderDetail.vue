@@ -50,7 +50,7 @@
         <span @click="callUser">
           <img src="./../../assets/call-service.png" alt />联系车主
         </span>
-        <span @click="showCarImg">
+        <span @click="showCarImg('show')">
           <img src="./../../assets/my-car-img.png" alt />车辆照片
         </span>
       </div>
@@ -77,7 +77,7 @@
         ref="upload"
         :action="action"
         :simultaneous-uploads="1"
-        :max="1"
+        :max="3"
         @file-removed="fileRemoved"
         @file-success="fileSuccess"
         :process-file="processFile"
@@ -98,8 +98,10 @@
     <!--查看图片模态框-->
     <div class="dialog-layer" v-show="isCarImgShow">
       <div class="dialog-box-black my-order-dialog-box">
-        <img src="./../../assets/close.png" @click="showCarImg" class="dialog-box-black-close" alt />
+        <img src="./../../assets/close.png" @click="showCarImg('close')" class="dialog-box-black-close" alt />
         <img :src="carImageUrl" class="dialog-car-img" alt />
+         <i class="cubeic-back imgfont imgfont-left" @click="changeImgIndex('-1')"></i>
+        <i class="cubeic-arrow imgfont imgfont-right" @click="changeImgIndex('1')"></i>
         <div v-show="!carImageUrl" class="dialog-box-black-text">车主未上传照片</div>
       </div>
     </div>
@@ -123,13 +125,11 @@ export default {
       orderId: "",
       tabBar: "",
       isImgShow: false,
-      carImageUrl: "",
+      staffOrderImgs:[],
       staffOrderImg: {
-        createTime: "2019-06-10 15:45:26",
-        delStatus: false,
-        id: 2,
-        orderId: "",
+        createTime: "",
         url: "",
+        id:'',
       },
       orderInfo: {},
       consumerOrder: {},
@@ -137,6 +137,11 @@ export default {
       isOpenDoorShow: false,
       isSuccessShow: false,
       parkingLocation: "",
+      carImageObject:[],
+      carImageUrls:[],
+      carImageUrl: "",
+      imglength:'',
+      imgindex:'',
       //图片上传action
       action: {
         target:'https://www.freelycar.com/api/upload/staffOrderImg',
@@ -190,7 +195,10 @@ export default {
         console.log(res);
         this.orderInfo = res;
         this.consumerOrder = res.consumerOrder;
-        this.carImageUrl = this.orderInfo.clientOrderImgs[0]?this.orderInfo.clientOrderImgs[0].url:'';
+        this.carImageObject = res.clientOrderImgs;
+        for(let i in this.carImageObject){
+          this.carImageUrls.push(this.carImageObject[i].url);
+        }
       });
     },
 
@@ -216,8 +224,22 @@ export default {
     },
 
     // 查看车辆照片
-    showCarImg() {
+    showCarImg(info) {
+      if(info=="show" && this.carImageObject){
+        this.imglength = this.carImageUrls.length;
+        this.carImageUrl = this.carImageUrls[0];
+        this.imgindex= 0;
+      }
       this.isCarImgShow = !this.isCarImgShow;
+    },
+    changeImgIndex(index){
+      if(index=='-1'){
+        this.carImageUrl = this.carImageUrls[(this.imgindex-1+this.imglength)%this.imglength]
+        this.imgindex = (this.imgindex-1+this.imglength)%this.imglength
+      }else if(index=="1"){
+        this.carImageUrl = this.carImageUrls[(this.imgindex+1+this.imglength)%this.imglength]
+        this.imgindex = (this.imgindex+1+this.imglength)%this.imglength
+      }
     },
 
     // 联系车主
@@ -372,7 +394,7 @@ export default {
           parkingLocation: this.parkingLocation,
         },
         doorId: id,
-        staffOrderImg: this.staffOrderImg,
+        staffOrderImgs: this.staffOrderImgs,
       }).then((res) => {
         this.$refs.success.changeTxt("tecFinish");
         this.isSuccessShow = true;
@@ -385,13 +407,21 @@ export default {
     //上传按钮
     fileSuccess(e) {
       this.staffOrderImg.url = e.response.data.url;
-      // this.isImgShow = true
-      console.log(e);
+      let client={}
+      client.url = e.response.data.url;
+      client.id = e.response.data.id;
+      this.staffOrderImgs.push(client);
+
     },
 
     // 删除图片
-    fileRemoved() {
-      this.staffOrderImg.url = "";
+    fileRemoved(e) {
+      console.log(e);
+      for(var i in this.staffOrderImgs){
+        if(this.staffOrderImgs[i].id == e.response.data.id){
+          this.staffOrderImgs.splice(i,1);
+        }
+      }
     },
   },
   mounted: function () {
@@ -581,5 +611,19 @@ w(n) {
   position: relative;
   left: w(30);
   top: h(-60);
+}
+.imgfont{
+  color white;
+  font-size w(90)
+}
+.imgfont-left{
+  position absolute
+  left h(-60)
+  top h(400)
+}
+.imgfont-right{
+  position absolute
+  right h(-60)
+  top h(400)
 }
 </style>

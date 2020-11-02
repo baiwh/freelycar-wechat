@@ -13,7 +13,7 @@
       <div class="order-state">
         <span
           :class="[
-            item.state === 0 || item.state === 1 || item.state === 2
+            item.state === 0 || item.state === 1 || item.state === 2 || item.state==-1
               ? 'order-state-title order-state-blue'
               : 'order-state-title order-state-gray',
           ]"
@@ -52,7 +52,7 @@
         <a :href="['tel:' + storePhone]">
           <span>联系服务商</span>
         </a>
-        <button @click="openDoor(item.id, item)">立即开柜</button>
+        <button @click="scan">扫码开柜</button>
       </div>
 
       <div class="payment" v-show="item.payState === 1 && item.state === 2">
@@ -82,11 +82,13 @@
       <div class="dialog-box-black my-order-dialog-box">
         <img
           src="./../../assets/close.png"
-          @click="getImg"
+          @click="getImg('close')"
           class="dialog-box-black-close"
           alt=""
         />
         <img :src="staffOrderImgUrl" class="dialog-car-img" alt="" />
+        <i class="cubeic-back imgfont imgfont-left" @click="changeImgIndex('-1')"></i>
+        <i class="cubeic-arrow imgfont imgfont-right" @click="changeImgIndex('1')"></i>
         <div v-show="!staffOrderImgUrl" class="dialog-box-black-text">
           技师未上传照片
         </div>
@@ -113,16 +115,19 @@ export default {
       isSuccessShow: false,
       storePhone: "025-86697165",
       isCarImgShow: false,
+      staffOrderImgUrls:[],
       staffOrderImgUrl: "",
       noOrderShow: false,
       arkSn: null,
       configInfo: {},
+      imglength:'',
+      imgindex:'',
     };
   },
   methods: {
     // 获取订单列表
     getOrderList() {
-      this.$get("//wechat/order/listOrdersByClient", {
+      this.$get("/wechat/order/listOrdersByClient", {
         clientId: localStorage.getItem("clientId"),
       }).then((res) => {
         console.log(res);
@@ -144,10 +149,24 @@ export default {
 
     //      显示车照片
     getImg(index) {
-      if (!this.isCarImgShow) {
-        this.staffOrderImgUrl = this.msg[index].staffOrderImgUrl;
+      console.log(index)
+      if(index!='close'){
+        this.staffOrderImgUrls = this.msg[index].staffOrderImgUrl.split(',');
+        console.log(this.staffOrderImgUrls)
+      this.imglength = this.staffOrderImgUrls.length;
+      this.staffOrderImgUrl = this.staffOrderImgUrls[0];
+      this.imgindex= 0;
       }
       this.isCarImgShow = !this.isCarImgShow;
+    },
+    changeImgIndex(index){
+      if(index=='-1'){
+        this.staffOrderImgUrl = this.staffOrderImgUrls[(this.imgindex-1+this.imglength)%this.imglength]
+        this.imgindex = (this.imgindex-1+this.imglength)%this.imglength
+      }else if(index=="1"){
+        this.staffOrderImgUrl = this.staffOrderImgUrls[(this.imgindex+1+this.imglength)%this.imglength]
+        this.imgindex = (this.imgindex+1+this.imglength)%this.imglength
+      }
     },
 
     openDoor(id) {
@@ -172,7 +191,7 @@ export default {
           }).then((res) => {
             this.orderClass = "my-order stop-scroll";
             this.arkInfoState = "payOrder";
-            let local = res.split("-");
+            let local = res.staffKeyLocation.split("-");
             this.$refs.openDoor.changeTxt("payOrder", local[1]);
             this.isOpenDoorShow = true;
             this.$get("/wechat/ark/orderFinish", {
@@ -195,6 +214,8 @@ export default {
     // 标题
     orderStateTitle(state, payState) {
       switch (state) {
+        case -1:
+          return "进行中的订单";
         case 0:
           return "进行中的订单";
         case 1:
@@ -464,5 +485,19 @@ w(n) {
 .my-order-dialog-box {
   height: h(900);
   width: w(600);
+}
+.imgfont{
+  color white;
+  font-size w(90)
+}
+.imgfont-left{
+  position absolute
+  left h(-60)
+  top h(400)
+}
+.imgfont-right{
+  position absolute
+  right h(-60)
+  top h(400)
 }
 </style>

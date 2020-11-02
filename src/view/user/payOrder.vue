@@ -85,7 +85,7 @@
     </div>
 
     <!--未完工时显示-->
-    <button class="blue-btn" v-show="consumerOrder.state===0 || consumerOrder.state===1" @click="orderTracking">订单跟踪</button>
+    <button class="blue-btn" v-show="consumerOrder.state===0 || consumerOrder.state===1 || consumerOrder.state===-1" @click="orderTracking">订单跟踪</button>
     <!--只有预约状态显示-->
     <button class="gray-btn" v-show="consumerOrder.state===0" @click="cancelOrder">取消订单</button>
 

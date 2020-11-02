@@ -44,7 +44,7 @@
           }
             break
           case 'tecFinish':{
-            this.arkInfo={text1:doorSn+'号柜门已打开', text2:'请将钥匙放入柜内，并关闭柜门',text3:'柜门关闭后选择“确认完工”完成订单'}
+            this.arkInfo={text1:doorSn+'号柜门已打开', text2:'请将钥匙放入柜内，并关闭柜门',text3:''}
           }
             break
         }

@@ -17,8 +17,8 @@ export default {
       arkSn: "",
       userInfo: {},
       code: "",
-      isOpenDoorShow:false,
-      arkInfoState:"tecGetKey",
+      isOpenDoorShow: false,
+      arkInfoState: "tecGetKey",
     };
   },
   mounted() {
@@ -80,10 +80,14 @@ export default {
           }).then((res) => {
             console.log(res);
             var orderArksn = res[0].userKeyLocationSn.substr(0, 15);
-            if (res.length > 0 && orderArksn == this.arkSn && res[0].state==-1) {
+            if (
+              res.length > 0 &&
+              orderArksn == this.arkSn &&
+              res[0].state == -1
+            ) {
               //开柜
-              this.pickOpen(res[0].id,res[0].userKeyLocation)
-            }else{
+              this.pickOpen(res[0].id, res[0].userKeyLocation);
+            } else {
               this.$router.push({ path: "/order" });
             }
           });
@@ -97,11 +101,11 @@ export default {
         }
       });
     },
-     pickOpen(id,keyLocation) {
-        this.arkInfoState = 'tecGetKey'
-        let local = keyLocation.split('-')
-        this.$refs.openDoor.changeTxt('tecGetKey',local[1])
-        this.isOpenDoorShow = true;
+    pickOpen(id, keyLocation) {
+      this.arkInfoState = "tecGetKey";
+      let local = keyLocation.split("-");
+      this.$refs.openDoor.changeTxt("tecGetKey", local[1]);
+      this.isOpenDoorShow = true;
       this.$get("/wechat/ark/pickCar", {
         orderId: id,
         employeeId: localStorage.getItem("employeeId"),
@@ -111,7 +115,7 @@ export default {
           this.$router.push({ path: "/order" });
         }, 3000);
       });
-     },
+    },
 
     // 判断用户的网点
     getUserArkInfo() {
@@ -146,9 +150,30 @@ export default {
         arkSn: this.arkSn,
       })
         .then((res) => {
+          console.log(res);
           if (res && res.length > 0) {
-            if (res[0].state < 3) {
+            if (res[0].state < 3 && res[0].state != 2) {
               this.$router.push({ path: "/myOrder" });
+            } 
+            //已支付订单扫码
+            else if (res[0].state == 2 && res[0].payState == 2) {
+              //获取柜子ID
+              this.$get("/wechat/ark/getStaffKeyLocation", {
+                orderId: res[0].id,
+              }).then((newres) => {
+                console.log(newres);
+                this.arkInfoState = "payOrder";
+                let local = newres.staffKeyLocation.split("-");
+                this.$refs.openDoor.changeTxt("payOrder", local[1]);
+                var orderArksn = newres.staffKeyLocationSn.substr(0, 15);
+                //是当前柜子
+                if (this.arkSn == orderArksn) {
+                  this.userOpendoor(res[0].id);
+                } else {
+                  alert('非下单智能柜！')
+                  this.$router.push({ path: "/myOrder" });
+                }
+              });
             } else {
               this.$router.push({
                 path: "/billingOrder",
@@ -169,6 +194,19 @@ export default {
           console.log("捕捉测试err", err);
         });
     },
+    //用户开柜
+    userOpendoor(id) {
+      this.isOpenDoorShow = true;
+      this.$get("/wechat/ark/orderFinish", {
+        id: id,
+      }).then((res) => {
+        this.$refs.successArk.changeTxt("payOrder");
+        this.isSuccessShow = true;
+        setTimeout(() => {
+          this.$router.push({ path: "/myOrder" });
+        }, 3000);
+      });
+    },
     //判断是否存在code参数
     checkSubscribe() {
       if (this.getQueryString("code") != null) {
@@ -176,21 +214,21 @@ export default {
         localStorage.setItem("code", this.code);
         console.log("code:" + this.code);
         //获取个人信息
-        // this.$get("/wechat/config/getWeChatUserInfo", {
-        //   code: this.code,
-        // }).then((res) => {
-        //   console.log(res);
-        //   console.log(res.subscribe);
-        //   localStorage.setItem("subscribe", res.subscribe);
-        //   console.log("是否关注微信公众号" + localStorage.getItem("subscribe"));
-        //   // 是否关注公众号
-        //   if (localStorage.getItem("subscribe") == "false") {
-        //     window.location.href =
-        //       "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
-        //   } else {
-        //     this.isLogin();
-        //   }
-        // });
+        this.$get("/wechat/config/getWeChatUserInfo", {
+          code: this.code,
+        }).then((res) => {
+          console.log(res);
+          console.log(res.subscribe);
+          localStorage.setItem("subscribe", res.subscribe);
+          console.log("是否关注微信公众号" + localStorage.getItem("subscribe"));
+          // 是否关注公众号
+          if (localStorage.getItem("subscribe") == "false") {
+            window.location.href =
+              "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
+          } else {
+            this.isLogin();
+          }
+        });
         this.isLogin();
       } else {
         //console.log('未授权')
