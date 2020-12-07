@@ -81,7 +81,7 @@
       <!--<img v-show="isImgShow" class="billing-order-car-img" :src="carImageUrl" alt="">-->
       <!--<img class="billing-order-photo-add" src="./../../assets/add-img.png" alt="">-->
       <!--<img v-show="isImgShow" class="del-img" src="./../../assets/del-img.png" alt="" @click="delImg">-->
-      <div class="tip">您可以上传能显示车辆位置的照片</div>
+      <div class="tip">您可以上传能显示车辆位置的照片(最多3张)</div>
     </div>
     <div class="billing-order-card billing-order-position">
       <div class="align-center">
@@ -123,7 +123,7 @@
           <!-- 服务商 -->
           <div
             class="billing-order-dialog-content-list"
-            :class="[{active:!item.staffReady}]"
+            :class="[{ active: !item.staffReady }]"
             v-for="(item, serviceindex) in service"
             :key="serviceindex"
           >
@@ -293,11 +293,11 @@ export default {
         comment: "",
       },
       consumerProjectInfos: [],
-      clientOrderImgs:[],
+      clientOrderImgs: [],
       clientOrderImg: {
         createTime: "",
         url: "",
-        id:'',
+        id: "",
       },
       service: [],
       projects: [],
@@ -324,6 +324,7 @@ export default {
         // target: "http://192.168.0.168/api/upload/clientOrderImg",
         prop: "base64Value",
       },
+      timer: null,
     };
   },
   methods: {
@@ -430,23 +431,23 @@ export default {
     fileSuccess(e) {
       console.log("----");
       console.log(e);
-      let client={}
+      let client = {};
       client.url = e.response.data.url;
       client.id = e.response.data.id;
       this.clientOrderImgs.push(client);
-      console.log(this.clientOrderImgs)
+      console.log(this.clientOrderImgs);
       // this.isImgShow = true
     },
 
     // 删除图片
     fileRemoved(e) {
       console.log(e);
-      for(var i in this.clientOrderImgs){
-        if(this.clientOrderImgs[i].id == e.response.data.id){
-          this.clientOrderImgs.splice(i,1);
+      for (var i in this.clientOrderImgs) {
+        if (this.clientOrderImgs[i].id == e.response.data.id) {
+          this.clientOrderImgs.splice(i, 1);
         }
       }
-      console.log(this.clientOrderImgs)
+      console.log(this.clientOrderImgs);
     },
 
     // 选择项目按钮
@@ -554,21 +555,6 @@ export default {
           },
         });
         wx.ready(function () {
-          wx.onMenuShareAppMessage({
-            title: "点击下单", // 分享标题
-            desc: "测试柜子", // 分享描述
-            link: window.location.href, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-            imgUrl: "", // 分享图标  这个图片地址需要填写绝对路径 www.xxx.com/images/xxx.jpg
-            type: "link", // 分享类型,music、video或link，不填默认为link
-            dataUrl: "", // 如果type是music或video，则要提供数据链接，默认为空
-            success: function () {
-              // 用户确认分享后执行的回调函数
-              console.log('分享到朋友圈接口')
-            },
-            cancel: function () {
-              // 用户取消分享后执行的回调函数
-            },
-          });
           console.log("微信接口成功");
         });
         wx.error(function (res) {
@@ -633,7 +619,6 @@ export default {
           this.submitBilling(res.id);
         })
         .catch((err) => {
-          console.log("111");
           alert("下单失败，请勿放入钥匙");
           this.submitOrder = false;
           this.isOpenDoorShow = false;
@@ -649,10 +634,27 @@ export default {
         clientOrderImgs: this.clientOrderImgs,
       })
         .then((res) => {
-          this.$refs.successArk.changeTxt("billingOrder");
-          this.isSuccessShow = true;
-          setTimeout(() => {
-            this.$router.push({ path: "/myOrder" });
+          console.log(res);
+          const resid = res;
+          this.timer = setInterval(() => {
+            this.$get("/wechat/order/getDoorState", {
+                orderId: resid,
+              })
+              .then((doorres) => {
+                // console.log(res)
+                if (doorres.isBuffer) {
+                  this.arkInfoState = "billingOrder";
+                  this.$refs.openDoor.changeTxt("billingOrder", doorres.doorSn);
+                  this.isOpenDoorShow = true;
+                } else {
+                  clearInterval(this.timer);
+                  this.$refs.successArk.changeTxt("billingOrder");
+                  this.isSuccessShow = true;
+                  setTimeout(() => {
+                    this.$router.push({ path: "/myOrder" });
+                  }, 1000);
+                }
+              });
           }, 3000);
         })
         .catch((err) => {
@@ -685,7 +687,7 @@ export default {
     },
   },
   mounted: function () {
-    console.log(window.location.href)
+    console.log(window.location.href);
     if (this.$route.query.arkSn) {
       this.arkSn = this.$route.query.arkSn;
       localStorage.setItem("arkSn", this.$route.query.arkSn);
@@ -703,6 +705,10 @@ export default {
   //   this.getUserInfo()
   //   this.wxConfig()
   // },
+  beforeDestroy() {
+    clearInterval(this.timer);
+    this.timer = null;
+  },
   computed: {
     orderPrice: function () {
       let price = 0;
@@ -733,7 +739,7 @@ h(n) {
 }
 
 w(n) {
-  ((n / 7.5vw));
+  ((((((n / 7.5vw))))));
 }
 
 .open-protocol {
@@ -953,7 +959,7 @@ w(n) {
       font-size: w(25);
     }
   }
-  
+
   .billing-order-dialog-item-price {
     float: right;
     color: #FFBD03;

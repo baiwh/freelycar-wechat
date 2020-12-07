@@ -16,15 +16,15 @@
           placeholder="请输入验证码"
           v-model="password"
         />
-        <div class="password-info" :class="getCodeInfo" @click="getCode">{{passwordInfo}}</div>
+        <div class="password-info" :class="getCodeInfo" @click="getCode">
+          {{ passwordInfo }}
+        </div>
       </div>
       <div class="btn">
         <button :class="loginBtn" @click="logIn">登录</button>
       </div>
       <div class="tecbtn">
-        <router-link to="/tecLogin">
-          <button>技师登录</button>
-        </router-link>
+        <router-link to="/tecLogin"> 技师登录 </router-link>
       </div>
     </div>
   </div>
@@ -61,6 +61,7 @@ export default {
     this.redirect = this.$route.query.redirect;
     if (this.$route.query.arkSn) {
       localStorage.setItem("arkSn", this.$route.query.arkSn);
+      this.arkSn = this.$route.query.arkSn;
     } else {
       this.arkSn = localStorage.getItem("arkSn");
     }
@@ -75,25 +76,27 @@ export default {
     // 获取验证码
     getCode() {
       if (this.phone.length === 11) {
-        this.$post("/wechat/login/getSmsCode?phone=" + this.phone).then(
-          (res) => {
-            let info = setInterval(() => {
-              if (this.getCodeInfoTime !== 0) {
-                this.getCodeInfoTime -= 1;
-                this.passwordInfo = this.getCodeInfoTime + "秒后可重获";
-              } else {
-                this.passwordInfo = "获取验证码";
-                this.getCodeInfoTime = 60;
-                clearInterval(info);
-              }
-            }, 1000);
-            this.toast = this.$createToast({
-              txt: "成功获取验证码",
-              type: "txt",
-            });
-            this.toast.show();
-          }
-        );
+        if (this.passwordInfo == "获取验证码") {
+          this.$post("/wechat/login/getSmsCode?phone=" + this.phone).then(
+            (res) => {
+              let info = setInterval(() => {
+                if (this.getCodeInfoTime !== 0) {
+                  this.getCodeInfoTime -= 1;
+                  this.passwordInfo = this.getCodeInfoTime + "秒后可重获";
+                } else {
+                  this.passwordInfo = "获取验证码";
+                  this.getCodeInfoTime = 60;
+                  clearInterval(info);
+                }
+              }, 1000);
+              this.toast = this.$createToast({
+                txt: "成功获取验证码",
+                type: "txt",
+              });
+              this.toast.show();
+            }
+          );
+        }
       } else {
         this.toast = this.$createToast({
           txt: "请输入正确的手机号",
@@ -118,7 +121,7 @@ export default {
             "&nickName=" +
             this.userInfo.nickname
         ).then((res) => {
-          console.log(res.wxUserInfo)
+          console.log(res.wxUserInfo);
           this.wxUserInfo = res.wxUserInfo;
           // this.axios.defaults.headers.common["Authorization"] = res.jwt
           localStorage.setItem("jwt", res.jwt);
@@ -128,7 +131,10 @@ export default {
           localStorage.setItem("openId", this.wxUserInfo.openId);
           localStorage.setItem("storeId", this.wxUserInfo.defaultStoreId);
           localStorage.setItem("storeName", this.wxUserInfo.defaultStoreName);
-          localStorage.setItem("storeAddress",this.wxUserInfo.defaultStoreAddress);
+          localStorage.setItem(
+            "storeAddress",
+            this.wxUserInfo.defaultStoreAddress
+          );
           localStorage.setItem("trueName", this.wxUserInfo.trueName);
           localStorage.setItem("Authorization", "Bearer " + res.jwt);
           // // 判断是否存在柜子码
@@ -136,7 +142,7 @@ export default {
             // 检查柜子信息，看是否需要换网点
             this.getArkInfo();
           } else {
-              this.$router.push({ path: "/userHome" });
+            this.$router.push({ path: "/userHome" });
           }
         });
       } else {
@@ -188,54 +194,69 @@ export default {
 
     //判断是否存在code参数
     isCode() {
-      if (this.getQueryString("code") != null) {
-        this.code = this.getQueryString("code");
-        console.log("第一次code" + this.code);
-        // 页面里的code和localstorage里的一样
-        if (this.code === localStorage.getItem("code")) {
-          this.userInfo.openid = localStorage.getItem("openId");
-          this.userInfo.headimgurl = localStorage.getItem("headImgUrl");
-          this.userInfo.nickname = localStorage.getItem("nickName");
-          this.userInfo.subscribe = localStorage.getItem("subscribe");
-          console.log(
-            "1是否关注微信公众号" + localStorage.getItem("subscribe")
-          );
-          // 是否关注公众号
-          if (localStorage.getItem("subscribe") == "false") {
-            window.location.href =
-              "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
-          }
-        } else {
-          //将code保存起来
-          localStorage.setItem("code", this.code);
-          console.log("第二次code" + this.code);
-          //获取个人信息
-          this.$get("/wechat/config/getWeChatUserInfo", {
-            code: this.code,
-          }).then((res) => {
-            console.log(res);
-            this.userInfo = res;
-            localStorage.setItem("openId", this.userInfo.openid);
-            localStorage.setItem("subscribe", this.userInfo.subscribe);
-            localStorage.setItem("nickName", this.userInfo.nickname);
-            localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
-            console.log(
-              "2是否关注微信公众号" + localStorage.getItem("subscribe")
-            );
-            // 是否关注公众号
-            if (localStorage.getItem("subscribe") == "false") {
-              window.location.href =
-                "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
-            }
-          });
-        }
-      } else {
-        //console.log('未授权')
-        // 开发
-        window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect'
-        // window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
-        // 线上
-      }
+      // if (this.getQueryString("code") != null) {
+      //   this.code = this.getQueryString("code");
+      //   console.log("第一次code" + this.code);
+      //   // 页面里的code和localstorage里的一样
+      //   if (this.code === localStorage.getItem("code")) {
+      //     this.userInfo.openid = localStorage.getItem("openId");
+      //     this.userInfo.headimgurl = localStorage.getItem("headImgUrl");
+      //     this.userInfo.nickname = localStorage.getItem("nickName");
+      //     this.userInfo.subscribe = localStorage.getItem("subscribe");
+      //     console.log(
+      //       "1是否关注微信公众号" + localStorage.getItem("subscribe")
+      //     );
+      //     // 是否关注公众号
+      //     if (localStorage.getItem("subscribe") == "false") {
+      //       window.location.href =
+      //         "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
+      //     }
+      //   } else {
+      //     //将code保存起来
+      //     localStorage.setItem("code", this.code);
+      //     console.log("第二次code" + this.code);
+      //     //获取个人信息
+      //     this.$get("/wechat/config/getWeChatUserInfo", {
+      //       code: this.code,
+      //     }).then((res) => {
+      //       console.log(res);
+      //       this.userInfo = res;
+      //       localStorage.setItem("openId", this.userInfo.openid);
+      //       localStorage.setItem("subscribe", this.userInfo.subscribe);
+      //       localStorage.setItem("nickName", this.userInfo.nickname);
+      //       localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
+      //       console.log(
+      //         "2是否关注微信公众号" + localStorage.getItem("subscribe")
+      //       );
+      //       // 是否关注公众号
+      //       if (localStorage.getItem("subscribe") == "false") {
+      //         window.location.href =
+      //           "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
+      //       }
+      //     });
+      //   }
+      // } else {
+      //   //console.log('未授权')
+      //   // 开发
+      //   window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect'
+      //   // window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
+      //   // 线上
+      // }
+      //用户
+      this.userInfo = {
+        city: "杭州",
+        gender: "男",
+        headimgurl:
+          "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJiamoz5DKExvibiaWlHZZQVQjHm2ueicIM0rENicVo0kKJAdArxP0hjK3NicnXGxs5w9DaTXZRHibmwKnew/132",
+        nickname: "Baiye",
+        openid: "oBaSqs8HZFzGxJpZGePKt1kkckOk",
+        province: "浙江",
+        subscribe: true,
+      };
+      localStorage.setItem("openId", this.userInfo.openid);
+      localStorage.setItem("subscribe", this.userInfo.subscribe);
+      localStorage.setItem("nickName", this.userInfo.nickname);
+      localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
     },
 
     //判断参数是否存在
@@ -262,10 +283,10 @@ export default {
 
     //      判断当前最新订单状态
     getOrderState() {
-      this.$get("/wechat/order/listOrders", {
+      this.$get("/wechat/order/listOrdersByClient", {
         clientId: localStorage.getItem("clientId"),
-        type: "ark",
-        arkSn: this.arkSn,
+        // type: "ark",
+        // arkSn: this.arkSn,
       })
         .then((res) => {
           if (res && res.length > 0) {
@@ -323,7 +344,7 @@ h(n) {
 }
 
 w(n) {
-  (n / 7.5vw);
+  (((n / 7.5vw)));
 }
 
 .login {
@@ -403,7 +424,7 @@ w(n) {
 .btn {
   display: flex;
   justify-content: center;
-  width:100%;
+  width: 100%;
   margin: w(116) 0;
 }
 
@@ -428,11 +449,13 @@ w(n) {
 .login-btn-gray {
   background-color: darkgray;
 }
-.tecbtn{
-  margin-top:w(80);
+
+.tecbtn {
+  margin-top: w(80);
 }
-.tecbtn button{
-  font-size:w(28);
-  color #a9a9a9
+
+.tecbtn button {
+  font-size: w(28);
+  color: #a9a9a9;
 }
 </style>

@@ -65,12 +65,13 @@
       </div>
       <div class="pay-order-card-item-second">
         <div v-for="(item,index) in consumerProjectInfos" :key="index">
-          <span class="pay-order-info-gray">{{item.projectName}}</span>
+          <span class="pay-order-info-gray">{{rspName+'-'+item.projectName}}</span>
           <!--<span class="pay-order-info-yellow">￥{{item.price}}</span>-->
         </div>
       </div>
       <div class="pay-order-card-item" v-show="consumerOrder.state===2||consumerOrder.state===3">
-        <span class="pay-order-info-gray">总计￥{{consumerOrder.totalPrice}}
+        <span class="pay-order-info-gray">
+            <span class="pay-order-info-blue" @click="getImg('open')">查看图片</span>
           <a :href="['tel:' + storeInfo.phone]">
             <img class="call-service" src="./../../assets/call-service.png" alt=""><b class="pay-order-info-blue">联系服务商</b>
           </a>
@@ -88,6 +89,23 @@
     <button class="blue-btn" v-show="consumerOrder.state===0 || consumerOrder.state===1 || consumerOrder.state===-1" @click="orderTracking">订单跟踪</button>
     <!--只有预约状态显示-->
     <button class="gray-btn" v-show="consumerOrder.state===0" @click="cancelOrder">取消订单</button>
+
+    <div class="dialog-layer" v-show="isCarImgShow">
+      <div class="dialog-box-black my-order-dialog-box">
+        <img
+          src="./../../assets/close.png"
+          @click="getImg('close')"
+          class="dialog-box-black-close"
+          alt=""
+        />
+        <img :src="staffOrderImgUrl" class="dialog-car-img" alt="" />
+        <i class="cubeic-back imgfont imgfont-left" @click="changeImgIndex('-1')"></i>
+        <i class="cubeic-arrow imgfont imgfont-right" @click="changeImgIndex('1')"></i>
+        <div v-show="!staffOrderImgUrl" class="dialog-box-black-text">
+          技师未上传照片
+        </div>
+      </div>
+    </div>
 
     <open-door ref="openDoor" :ark-info-state="arkInfoState" v-show="isOpenDoorShow"></open-door>
     <success ref="successArk" :ark-info-state="arkInfoState" v-show="isSuccessShow"></success>
@@ -112,7 +130,13 @@
         isSuccessShow:false,
         payWayInfo:'微信支付',
         myCard:[{balance:0}],
-        storeInfo:{}
+        storeInfo:{},
+        isCarImgShow:false,
+        staffOrderImgUrls:[],
+        staffOrderImgUrl: "",
+        imglength:'',
+        imgindex:'',
+        rspName:'',
       }
     },
     // state状态：0预约 1 未完工 2 完工 3 未开柜
@@ -123,14 +147,37 @@
           id:this.orderId
         }).then(res=>{
           console.log(res)
+          this.rspName = res.rspName;
           this.consumerOrder=res.consumerOrder
           console.log(this.consumerOrder)
           this.consumerProjectInfos=res.consumerProjectInfos
           this.storeInfo=res.store
           this.storeInfo.Detail = res.ark.location
+          for(var i in res.staffOrderImgs){
+            this.staffOrderImgUrls.push(res.staffOrderImgs[i].url);
+          }
           // this.getMyCard()
         })
       },
+      //      显示车照片
+    getImg(index) {
+      console.log(index)
+      if(index!='close'){
+      this.imglength = this.staffOrderImgUrls.length;
+      this.staffOrderImgUrl = this.staffOrderImgUrls[0];
+      this.imgindex= 0;
+      }
+      this.isCarImgShow = !this.isCarImgShow;
+    },
+    changeImgIndex(index){
+      if(index=='-1'){
+        this.staffOrderImgUrl = this.staffOrderImgUrls[(this.imgindex-1+this.imglength)%this.imglength]
+        this.imgindex = (this.imgindex-1+this.imglength)%this.imglength
+      }else if(index=="1"){
+        this.staffOrderImgUrl = this.staffOrderImgUrls[(this.imgindex+1+this.imglength)%this.imglength]
+        this.imgindex = (this.imgindex+1+this.imglength)%this.imglength
+      }
+    },
 
       // // 获取我的会员卡
       // getMyCard(){
@@ -571,4 +618,24 @@
     margin-left w(15)
     border-left $border-gray
     font-size w(25)
+
+
+  .my-order-dialog-box {
+  height: h(900);
+  width: w(600);
+}
+.imgfont{
+  color white;
+  font-size w(90)
+}
+.imgfont-left{
+  position absolute
+  left h(-60)
+  top h(400)
+}
+.imgfont-right{
+  position absolute
+  right h(-60)
+  top h(400)
+}
 </style>

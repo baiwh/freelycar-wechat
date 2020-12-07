@@ -4,45 +4,65 @@
       <div class="order-detail-head">
         <span>订单编号</span>
         <span>
-          {{orderId}}
-          <b v-clipboard:copy="orderId" v-clipboard:success="onCopy" v-clipboard:error="onError">复制</b>
+          {{ orderId }}
+          <b
+            v-clipboard:copy="orderId"
+            v-clipboard:success="onCopy"
+            v-clipboard:error="onError"
+            >复制</b
+          >
         </span>
       </div>
 
       <div class="order-detail-info">
         <div>
           车牌号
-          <span>{{consumerOrder.licensePlate}}</span>
+          <span>{{ consumerOrder.licensePlate }}</span>
         </div>
         <div>
           品牌车系
-          <span>{{consumerOrder.carColor}} · {{consumerOrder.carBrand}}</span>
+          <span
+            >{{ consumerOrder.carColor }} · {{ consumerOrder.carBrand }}</span
+          >
         </div>
         <div>
           车主名字
-          <span>{{consumerOrder.clientName}}</span>
+          <span>{{ consumerOrder.clientName }}</span>
         </div>
         <div>
           下单时间
-          <span>{{consumerOrder.createTime}}</span>
+          <span>{{ consumerOrder.createTime }}</span>
         </div>
         <div class="order-detail-item">
           预约项目
           <span
-            v-for="(item,index) in orderInfo.consumerProjectInfos"
+            v-for="(item, index) in orderInfo.consumerProjectInfos"
             :key="index"
-          >{{item.projectName}}</span>
+            >{{ item.projectName }}</span
+          >
+        </div>
+        <div>
+          预约服务商
+          <span>{{ rspName }}</span>
         </div>
         <div>
           钥匙位置
           <span class="order-detail-key">
-            {{tabBar===1?consumerOrder.userKeyLocation:consumerOrder.staffKeyLocation}}
+            {{
+              tabBar === 1
+                ? consumerOrder.userKeyLocation
+                : consumerOrder.staffKeyLocation
+            }}
             <img src="./../../assets/position-blue2.png" alt />
           </span>
         </div>
         <div>
           停放位置
-          <span >{{consumerOrder.parkingLocation}}</span>
+          <span>{{ consumerOrder.parkingLocation }}</span>
+        </div>
+        <div>
+          备注信息
+          <span>{{ consumerOrder.comment }}</span>
         </div>
       </div>
 
@@ -56,21 +76,24 @@
       </div>
     </div>
 
-    <div class="order-detail-position" v-show="tabBar===1">
+    <div class="order-detail-position" v-show="tabBar === 1">
       <div class="order-detail-position-head">
         <span>
           <img src="./../../assets/position-blue.png" alt />车辆所在位置
         </span>
-        <span class="order-detail-position-orange" @click="arkLocation">快速定位</span>
+        <span class="order-detail-position-orange" @click="arkLocation"
+          >快速定位</span
+        >
       </div>
-      <cube-textarea v-model="parkingLocation" placeholder="请描述车辆停放的详细位置！"></cube-textarea>
+      <cube-textarea
+        v-model="parkingLocation"
+        placeholder="请描述车辆停放的详细位置！"
+      ></cube-textarea>
     </div>
 
-    <div class="order-detail-photo" v-show="tabBar===1">
+    <div class="order-detail-photo" v-show="tabBar === 1">
       <div class="order-detail-position-head">
-        <span>
-          <img src="./../../assets/img.png" alt />上传车辆照片
-        </span>
+        <span> <img src="./../../assets/img.png" alt />上传车辆照片 </span>
         <!--<img src="./../../assets/add1.png" alt="">-->
       </div>
       <cube-upload
@@ -84,31 +107,66 @@
         @files-added="filesAdded"
         @file-submitted="fileSubmitted"
       ></cube-upload>
+      <div class="tip">您可以上传还车位置与养护中图片（最多3张）</div>
       <!--<img v-show="isImgShow" class="order-detail-photo-img" :src="staffOrderImg.url" alt="">-->
       <!--<img class="order-detail-photo-del" src="./../../assets/del-img.png" alt="">-->
     </div>
 
     <div class="order-detail-btn" v-show="!isOpenDoorShow">
-      <button v-show="arkSn!==orderArkSn && tabBar===0" class="can-not-click">非当前智能柜，不可接单</button>
-      <button v-show="arkSn===orderArkSn && tabBar===0" class="big-blue-btn" @click="takeOrder">接单</button>
-      <button v-show="tabBar===1" class="big-blue-btn" @click="finishOrder">一键开柜</button>
+      <button
+        v-show="arkSn !== orderArkSn && tabBar === 0"
+        class="can-not-click"
+      >
+        非当前智能柜，不可接单
+      </button>
+      <button
+        v-show="arkSn === orderArkSn && tabBar === 0"
+        class="big-blue-btn"
+        @click="takeOrder"
+      >
+        接单
+      </button>
+      <button v-show="tabBar === 1" class="big-blue-btn" @click="finishOrder">
+        一键开柜
+      </button>
       <button class="big-gray-btn" @click="cancelBtn">取消</button>
     </div>
 
     <!--查看图片模态框-->
     <div class="dialog-layer" v-show="isCarImgShow">
       <div class="dialog-box-black my-order-dialog-box">
-        <img src="./../../assets/close.png" @click="showCarImg('close')" class="dialog-box-black-close" alt />
+        <img
+          src="./../../assets/close.png"
+          @click="showCarImg('close')"
+          class="dialog-box-black-close"
+          alt
+        />
         <img :src="carImageUrl" class="dialog-car-img" alt />
-         <i class="cubeic-back imgfont imgfont-left" @click="changeImgIndex('-1')"></i>
-        <i class="cubeic-arrow imgfont imgfont-right" @click="changeImgIndex('1')"></i>
-        <div v-show="!carImageUrl" class="dialog-box-black-text">车主未上传照片</div>
+        <i
+          class="cubeic-back imgfont imgfont-left"
+          @click="changeImgIndex('-1')"
+        ></i>
+        <i
+          class="cubeic-arrow imgfont imgfont-right"
+          @click="changeImgIndex('1')"
+        ></i>
+        <div v-show="!carImageUrl" class="dialog-box-black-text">
+          车主未上传照片
+        </div>
       </div>
     </div>
 
     <!--开门成功-->
-    <open-door ref="openDoor" :ark-info-state="arkInfoState" v-show="isOpenDoorShow"></open-door>
-    <success ref="success" :ark-info-state="arkInfoState" v-show="isSuccessShow"></success>
+    <open-door
+      ref="openDoor"
+      :ark-info-state="arkInfoState"
+      v-show="isOpenDoorShow"
+    ></open-door>
+    <success
+      ref="success"
+      :ark-info-state="arkInfoState"
+      v-show="isSuccessShow"
+    ></success>
   </div>
 </template>
 
@@ -125,11 +183,11 @@ export default {
       orderId: "",
       tabBar: "",
       isImgShow: false,
-      staffOrderImgs:[],
+      staffOrderImgs: [],
       staffOrderImg: {
         createTime: "",
         url: "",
-        id:'',
+        id: "",
       },
       orderInfo: {},
       consumerOrder: {},
@@ -137,17 +195,19 @@ export default {
       isOpenDoorShow: false,
       isSuccessShow: false,
       parkingLocation: "",
-      carImageObject:[],
-      carImageUrls:[],
+      carImageObject: [],
+      carImageUrls: [],
       carImageUrl: "",
-      imglength:'',
-      imgindex:'',
+      imglength: "",
+      rspName: "",
+      imgindex: "",
       //图片上传action
       action: {
-        target:'https://www.freelycar.com/api/upload/staffOrderImg',
+        target: "https://www.freelycar.com/api/upload/staffOrderImg",
         // target: "http://192.168.0.168/api/upload/staffOrderImg",
         prop: "base64Value",
       },
+      timer: null,
     };
   },
   methods: {
@@ -196,7 +256,8 @@ export default {
         this.orderInfo = res;
         this.consumerOrder = res.consumerOrder;
         this.carImageObject = res.clientOrderImgs;
-        for(let i in this.carImageObject){
+        this.rspName = res.rspName;
+        for (let i in this.carImageObject) {
           this.carImageUrls.push(this.carImageObject[i].url);
         }
       });
@@ -225,20 +286,24 @@ export default {
 
     // 查看车辆照片
     showCarImg(info) {
-      if(info=="show" && this.carImageObject){
+      if (info == "show" && this.carImageObject) {
         this.imglength = this.carImageUrls.length;
         this.carImageUrl = this.carImageUrls[0];
-        this.imgindex= 0;
+        this.imgindex = 0;
       }
       this.isCarImgShow = !this.isCarImgShow;
     },
-    changeImgIndex(index){
-      if(index=='-1'){
-        this.carImageUrl = this.carImageUrls[(this.imgindex-1+this.imglength)%this.imglength]
-        this.imgindex = (this.imgindex-1+this.imglength)%this.imglength
-      }else if(index=="1"){
-        this.carImageUrl = this.carImageUrls[(this.imgindex+1+this.imglength)%this.imglength]
-        this.imgindex = (this.imgindex+1+this.imglength)%this.imglength
+    changeImgIndex(index) {
+      if (index == "-1") {
+        this.carImageUrl = this.carImageUrls[
+          (this.imgindex - 1 + this.imglength) % this.imglength
+        ];
+        this.imgindex = (this.imgindex - 1 + this.imglength) % this.imglength;
+      } else if (index == "1") {
+        this.carImageUrl = this.carImageUrls[
+          (this.imgindex + 1 + this.imglength) % this.imglength
+        ];
+        this.imgindex = (this.imgindex + 1 + this.imglength) % this.imglength;
       }
     },
 
@@ -376,17 +441,42 @@ export default {
 
     // 确认完工的一键开柜
     finishOpen() {
-      this.$get("/wechat/ark/getEmptyDoor", {
-        arkSn: this.arkSn,
-      }).then((res) => {
-        window.scrollTo(0, 0);
-        this.arkInfoState = "tecFinish";
-        this.$refs.openDoor.changeTxt("tecFinish", res.doorSn);
-        this.isOpenDoorShow = true;
-        this.finishOpenDoor(res.id);
+      this.$get("/wechat/order/getDoorState", {
+        orderId: this.orderId,
+      }).then((stateres) => {
+        console.log(stateres);
+        if (stateres.isBuffer && stateres.doorSn !== null) {
+          this.arkInfoState = "tecFinish";
+          this.$refs.openDoor.changeTxt("tecFinish", stateres.doorSn);
+          this.isOpenDoorShow = true;
+          this.timer = setInterval(() => {
+            this.$get("/wechat/order/getDoorState", {
+              orderId: this.orderId,
+            }).then((timerres) => {
+              // console.log(timerres)
+              if (!timerres.isBuffer) {
+                clearInterval(this.timer);
+                this.$refs.success.changeTxt("tecFinish");
+                this.isSuccessShow = true;
+                setTimeout(() => {
+                  this.$router.push({ path: "/order" });
+                }, 1000);
+              }
+            });
+          }, 3000);
+        } else if (stateres.doorSn == null) {
+          this.$get("/wechat/ark/getEmptyDoor", {
+            arkSn: this.arkSn,
+          }).then((res) => {
+            console.log(res)
+            this.arkInfoState = "tecFinish";
+            this.$refs.openDoor.changeTxt("tecFinish", res.doorSn);
+            this.isOpenDoorShow = true;
+            this.finishOpenDoor(res.id);
+          });
+        }
       });
     },
-
     finishOpenDoor(id) {
       this.$post("/wechat/ark/finishCar", {
         consumerOrder: {
@@ -396,10 +486,21 @@ export default {
         doorId: id,
         staffOrderImgs: this.staffOrderImgs,
       }).then((res) => {
-        this.$refs.success.changeTxt("tecFinish");
-        this.isSuccessShow = true;
-        setTimeout(() => {
-          this.$router.push({ path: "/order" });
+        console.log(res);
+        this.timer = setInterval(() => {
+          this.$get("/wechat/order/getDoorState", {
+            orderId: this.orderId,
+          }).then((timerres) => {
+            // console.log(timerres)
+            if (!timerres.isBuffer) {
+              clearInterval(this.timer);
+              this.$refs.success.changeTxt("tecFinish");
+              this.isSuccessShow = true;
+              setTimeout(() => {
+                this.$router.push({ path: "/order" });
+              }, 1000);
+            }
+          });
         }, 3000);
       });
     },
@@ -407,19 +508,18 @@ export default {
     //上传按钮
     fileSuccess(e) {
       this.staffOrderImg.url = e.response.data.url;
-      let client={}
+      let client = {};
       client.url = e.response.data.url;
       client.id = e.response.data.id;
       this.staffOrderImgs.push(client);
-
     },
 
     // 删除图片
     fileRemoved(e) {
       console.log(e);
-      for(var i in this.staffOrderImgs){
-        if(this.staffOrderImgs[i].id == e.response.data.id){
-          this.staffOrderImgs.splice(i,1);
+      for (var i in this.staffOrderImgs) {
+        if (this.staffOrderImgs[i].id == e.response.data.id) {
+          this.staffOrderImgs.splice(i, 1);
         }
       }
     },
@@ -431,6 +531,10 @@ export default {
     this.arkSn = localStorage.getItem("arkSn");
     this.getOrderDetail();
   },
+  beforeDestroy() {
+    clearInterval(this.timer);
+    this.timer = null;
+  },
 };
 </script>
 
@@ -441,7 +545,7 @@ h(n) {
 }
 
 w(n) {
-  (n / 7.5vw);
+  ((((((n / 7.5vw))))));
 }
 
 .order-detail-key {
@@ -473,7 +577,7 @@ w(n) {
 
 .order-detail-card {
   background: white;
-  height: h(580);
+  height: h(650);
   width: w(727);
   padding: 0 w(30);
   box-sizing: border-box;
@@ -500,12 +604,16 @@ w(n) {
 }
 
 .order-detail-info {
-  height: h(340);
+  height: h(420);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin: h(40) 0;
-  color: #666666;
+  font-size: w(30);
+
+  div {
+    line-height: h(50);
+  }
 
   span {
     float: right;
@@ -587,6 +695,15 @@ w(n) {
   padding: h(25) w(30);
   box-sizing: border-box;
   margin: w(12);
+  position: relative;
+}
+
+.order-detail-photo .tip {
+  font-size: 10px;
+  position: absolute;
+  bottom: w(20);
+  left: w(20);
+  color: #aeaeae;
 }
 
 .order-detail-btn {
@@ -612,18 +729,21 @@ w(n) {
   left: w(30);
   top: h(-60);
 }
-.imgfont{
-  color white;
-  font-size w(90)
+
+.imgfont {
+  color: white;
+  font-size: w(90);
 }
-.imgfont-left{
-  position absolute
-  left h(-60)
-  top h(400)
+
+.imgfont-left {
+  position: absolute;
+  left: h(-60);
+  top: h(400);
 }
-.imgfont-right{
-  position absolute
-  right h(-60)
-  top h(400)
+
+.imgfont-right {
+  position: absolute;
+  right: h(-60);
+  top: h(400);
 }
 </style>

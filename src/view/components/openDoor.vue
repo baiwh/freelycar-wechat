@@ -1,7 +1,7 @@
 <template>
   <div class="open-door">
     <img class="open-door-img" src="./../../assets/open-door.png" alt="">
-    <span>{{arkInfo.text1}}</span>
+    <span class="doorInfo" v-html="arkInfo.text1"></span>
     <span>{{arkInfo.text2}}<br>{{arkInfo.text3}}</span>
     <div class="open-door-loading">
       <img class="open-door-car" src="./../../assets/loading-car.png" alt="">
@@ -32,11 +32,11 @@
           }
             break
           case 'cancelOrder':{
-            this.arkInfo={text1:doorSn+'打开，请取走钥匙，并关闭柜门', text2:'',text3:''}
+            this.arkInfo={text1:doorSn+`打开</br>请取走钥匙，并关闭柜门`, text2:'',text3:''}
           }
             break
           case 'payOrder':{
-            this.arkInfo={text1:doorSn+'打开，请取走钥匙，并关闭柜门', text2:'谢谢您的支持！',text3:''}
+            this.arkInfo={text1:doorSn+`打开</br>请取走钥匙，并关闭柜门`, text2:'谢谢您的支持！',text3:''}
           }
             break
           case 'tecGetKey':{
@@ -51,6 +51,7 @@
       }
     },
     mounted: function () {
+      // this.arkInfo={text1:`号柜门正在打开，请勿离开`, text2:'柜门打开，请放入钥匙，并关闭柜门',text3:''}
 
     }
   }
@@ -84,6 +85,11 @@
     color #2049BF
     font-size w(24)
     text-align center
+  .open-door .doorInfo{
+  color: #D9001B;
+  font-size w(38);
+  line-height w(50)
+}
 
   .open-door-img
     height h(184)

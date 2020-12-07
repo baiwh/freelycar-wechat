@@ -43,10 +43,17 @@
             预约项目<b>{{ item.projectNames }}</b>
           </div>
           <div>
+            预约服务商
+            <span>{{item.rspName}}</span>
+          </div>
+          <div>
             钥匙位置<span> {{ item.keyLocation }}</span>
           </div>
           <div>
             车辆停放位置<span> {{ item.parkingLocation }}</span>
+          </div>
+          <div>
+            备注信息<span>{{item.comment}}</span>
           </div>
           <div class="order-detail-other">
             <span @click="showCarImg(item)">
@@ -91,6 +98,10 @@
           <div>
             预约项目
             <b>{{ item.projectNames }}</b>
+          </div>
+          <div>
+            预约服务商
+            <span>{{item.rspName}}</span>
           </div>
           <div>
             钥匙位置
@@ -156,6 +167,10 @@
             <b>{{ item.projectNames }}</b>
           </div>
           <div>
+            预约服务商
+            <span>{{item.rspName}}</span>
+          </div>
+          <div>
             钥匙位置
             <span>{{ item.userKeyLocation }}</span>
           </div>
@@ -201,6 +216,10 @@
           <div>车主姓名<span>{{item.clientName}}</span></div>
           <div>完工时间<span>{{item.finishTime}}</span></div>
           <div>预约项目 <b>{{item.projectNames}}</b></div>
+          <div>
+            预约服务商
+            <span>{{item.rspName}}</span>
+          </div>
           <div>钥匙位置<span>{{item.keyLocation}}</span></div>
           <div>停放位置<span>{{item.parkingLocation}}</span></div>
           <div>支付状态<span>{{item.payState}}</span></div>
@@ -634,7 +653,7 @@ w(n) {
 
 .order-card {
   background: white;
-  height: h(440);
+  height: h(520);
   width: w(727);
   margin: w(12);
   padding: 0 w(29);
@@ -643,7 +662,7 @@ w(n) {
 }
 
 .order-card-scan {
-  height: h(500);
+  height: h(550);
 }
 
 .order-card-head {

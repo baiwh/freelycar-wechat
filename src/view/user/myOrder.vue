@@ -258,7 +258,6 @@ export default {
           },
         });
         wx.ready(() => {
-          this.info = "正在打开扫一扫";
           console.log("微信接口成功");
         });
         wx.error(function (res) {
@@ -385,7 +384,7 @@ w(n) {
   justify-content: center;
   align-items: flex-start;
   flex-direction: column;
-  padding: h(10) 0;
+  padding: h(10) 0 0 0;
 }
 
 .order-info-brand {

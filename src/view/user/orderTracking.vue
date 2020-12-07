@@ -91,7 +91,6 @@
             this.consumerOrder.createTime,
             this.consumerOrder.orderTakingTime,
             this.consumerOrder.pickTime,
-           this.consumerOrder.deliverTime,
            this.consumerOrder.finishTime,
           ];
           console.log(this.time)
@@ -110,28 +109,23 @@
                 }
                 case 1:{
                   title='已接单'
-                  info='正在为您的爱车安排服务'
+                  info='您的爱车由'+this.consumerOrder.pickCarStaffName+'接单'
                   this.title='爱车正在安排服务'
                   this.subtitle="若技师长时间未取车，您可联系相应技师"
                   this.state='已接单'
                   break
                 }
                 case 2:{
-                  title='已接车'
-                  info='您的爱车由'+this.consumerOrder.pickCarStaffName+'接单'
-                  this.title='爱车正送往网点'
-                  this.subtitle=null
+                  title='已取车'
+                  info='您的爱车由'+this.consumerOrder.pickCarStaffName+'取车'
+                  this.title='爱车正送往服务商'
+                  this.subtitle=''
                   this.state='已接车'
                   break
                 }
                case 3:{
                  title='订单完成'
-                 info='正在为您的爱车安排服务'
-                 break
-               }
-               case 4:{
-                 title='已取车'
-                 info='正在为您的爱车安排服务'
+                 info='已完成，请支付订单'
                  break
                }
               }
