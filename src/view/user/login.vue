@@ -16,7 +16,9 @@
           placeholder="请输入验证码"
           v-model="password"
         />
-        <div class="password-info" :class="getCodeInfo" @click="getCode">{{passwordInfo}}</div>
+        <div class="password-info" :class="getCodeInfo" @click="getCode">
+          {{ passwordInfo }}
+        </div>
       </div>
       <div class="btn">
         <router-link to="/tecLogin">
@@ -29,6 +31,7 @@
 </template>
 
 <script>
+import { Indicator } from "mint-ui";
 import wx from "weixin-js-sdk";
 export default {
   name: "login",
@@ -67,9 +70,26 @@ export default {
       localStorage.setItem("redirect", this.redirect);
     }
     console.log(localStorage.getItem("redirect"));
+    if (window.history && window.history.pushState) {
+      // 向历史记录中插入了当前页
+      history.pushState(null, null, document.URL);
+      window.addEventListener("popstate", this.goBack, false);
+    }
+    Indicator.open({
+      text: "微信授权中...",
+      spinnerType: "fading-circle",
+    });
+
     this.isweixin();
   },
+  destroyed() {
+    window.removeEventListener("popstate", this.goBack, false);
+  },
   methods: {
+    goBack() {
+      // console.log("点击了浏览器的返回按钮");
+      history.pushState(null, null, document.URL);
+    },
     // 获取验证码
     getCode() {
       if (this.phone.length === 11) {
@@ -193,6 +213,7 @@ export default {
         console.log("第一次code" + this.code);
         // 页面里的code和localstorage里的一样
         if (this.code === localStorage.getItem("code")) {
+           Indicator.close();
           this.userInfo.openid = localStorage.getItem("openId");
           this.userInfo.headimgurl = localStorage.getItem("headImgUrl");
           this.userInfo.nickname = localStorage.getItem("nickName");
@@ -213,8 +234,10 @@ export default {
           this.$get("/wechat/config/getWeChatUserInfo", {
             code: this.code,
           }).then((res) => {
+            Indicator.close();
             console.log(res);
             this.userInfo = res;
+
             localStorage.setItem("openId", this.userInfo.openid);
             localStorage.setItem("subscribe", this.userInfo.subscribe);
             localStorage.setItem("nickName", this.userInfo.nickname);
@@ -233,7 +256,8 @@ export default {
         //console.log('未授权')
         // 开发
         // window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect'
-        window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
+        window.location.href =
+          "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
         // 线上
       }
     },
@@ -323,7 +347,7 @@ h(n) {
 }
 
 w(n) {
-  (n / 7.5vw);
+  (((n / 7.5vw)));
 }
 
 .login {
@@ -389,7 +413,6 @@ w(n) {
   border-left: $border-gray;
   padding: 0 w(82) 0 w(36);
   text-align: center;
-  z-index: 999;
 }
 
 .gray-info {

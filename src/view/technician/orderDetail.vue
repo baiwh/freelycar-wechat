@@ -393,6 +393,10 @@ export default {
     fileRemoved() {
       this.staffOrderImg.url = "";
     },
+     goBack() {
+      // console.log("点击了浏览器的返回按钮");
+      history.pushState(null, null, document.URL);
+    },
   },
   mounted: function () {
     this.orderId = this.$route.query.orderId;
@@ -400,6 +404,14 @@ export default {
     this.orderArkSn = this.$route.query.arkSn;
     this.arkSn = localStorage.getItem("arkSn");
     this.getOrderDetail();
+    if (window.history && window.history.pushState) {
+      // 向历史记录中插入了当前页
+      history.pushState(null, null, document.URL);
+      window.addEventListener("popstate", this.goBack, false);
+    }
+  },
+  destroyed() {
+    window.removeEventListener("popstate", this.goBack, false);
   },
 };
 </script>
