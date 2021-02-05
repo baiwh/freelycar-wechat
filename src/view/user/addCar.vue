@@ -82,13 +82,17 @@
     <!--<img v-show="isImgShow" class="add-car-img" :src="carImageUrl" alt="">-->
 
     <button class="big-blue-btn" @click="addCar">保存</button>
+    <feed-back class="feedback">
+    </feed-back>
   </div>
 </template>
 
 <script>
 import compress from "@/components/compress";
+import feedBack from '@/view/components/feedBack.vue';
 
 export default {
+  components: { feedBack },
   name: "addCar",
   data() {
     return {
@@ -469,5 +473,10 @@ w(n) {
 }
 .car-number{
   margin: 5vw auto -5vw auto;
+}
+.feedback {
+  position fixed;
+  right 0
+  bottom h(900)
 }
 </style>

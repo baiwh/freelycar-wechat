@@ -13,7 +13,7 @@ module.exports = {
     proxyTable: {
     '/api': {  //使用"/api"来代替"https://www.freelycar.com"
       // target: 'https://www.freelycar.com', //源地址
-      target:'https://www.freelycar.cn',//测试地址
+      target:'https://www.freelycar.cn',//测试地址 
       // target: 'http://192.168.0.168', //源地址
       logLevel:'debug',
       changeOrigin: true,//改变源
@@ -26,7 +26,7 @@ module.exports = {
   },
 
     // Various Dev Server settings
-    host: 'localhost', // 开发
+    host: 'www.freelycartext.cn', // 开发
     port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,

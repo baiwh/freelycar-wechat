@@ -42,12 +42,17 @@
     <div class="no-store" v-show="!storeShow">
       对不起，您暂未选择网点
     </div>
+    <feed-back class="feedback">
+    </feed-back>
   </div>
 </template>
 
 <script>
+import feedBack from '@/view/components/feedBack.vue';
+
 export default {
   name: "service",
+  components: { feedBack },
   data() {
     return {
       serviceList: [],
@@ -200,5 +205,10 @@ w(n) {
   height:400px;
   line-height 400px;
   text-align center
+}
+.feedback {
+  position fixed;
+  right 0
+  bottom h(600)
 }
 </style>

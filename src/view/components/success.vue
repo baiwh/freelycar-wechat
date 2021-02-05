@@ -10,12 +10,17 @@
       <mt-button type="primary"  @click="scan">扫码开柜</mt-button>
       <mt-button type="primary"  @click="returnOrder">查看订单</mt-button>
     </div>
+  <feed-back class="feedback">
+    </feed-back>
   </div>
 </template>
 
 <script>
+import feedBack from '@/view/components/feedBack.vue';
+
   import wx from 'weixin-js-sdk'
   export default {
+     components: { feedBack },
     name: 'success',
     data() {
       return {
@@ -118,7 +123,7 @@
       // 微信注入权限
       wxConfig() {
         this.$get('/wechat/config/getJSSDKConfig',{
-            targetUrl:location.href
+            targetUrl:"https://www.freelycar.com/wechat/order"
           }
         ).then(res => {
           this.configInfo = res
@@ -154,8 +159,6 @@
       },
 
       scan(){
-        //微信扫一扫
-        this.wxConfig();
         console.log('直接扫码')
         wx.scanQRCode({
           needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
@@ -167,6 +170,7 @@
       },
     },
     mounted: function () {
+      // this.wxConfig();
     }
   }
 </script>
@@ -234,5 +238,12 @@
     border-radius :w(100);
     margin-bottom w(50)
 
+}
+
+
+.feedback {
+  position fixed;
+  right -50%
+  bottom h(600)
 }
 </style>

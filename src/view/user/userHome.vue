@@ -67,12 +67,15 @@
         </div>
       </a>
     </div>
-
+    <feed-back class="feedback">
+    </feed-back>
   </div>
 </template>
 
 <script>
+import feedBack from '@/view/components/feedBack.vue';
   export default {
+    components: { feedBack },
     name: 'userHome',
     data() {
       return {
@@ -133,7 +136,7 @@
 
     },
     created: function(){
-      if(localStorage.getItem('staffId')){
+      if(localStorage.getItem('employeeId')){
         this.$router.push({path:'/tecHome'})
       }else if(localStorage.getItem('clientId')){
         this.storeName=localStorage.getItem('storeName')?localStorage.getItem('storeName'):"暂无"
@@ -357,4 +360,10 @@
       box-sizing border-box
       background url("./../../assets/recharge.png") no-repeat
       background-size w(165) h(50)
+
+  .feedback {
+  position fixed;
+  right 0
+  bottom h(500)
+}
 </style>

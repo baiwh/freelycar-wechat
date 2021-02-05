@@ -44,11 +44,15 @@
     </div>
 
     <!--<button class="big-blue-btn" @click="toPayOrder">确认完成</button>-->
+    <feed-back class="feedback">
+    </feed-back>
   </div>
 </template>
 
 <script>
+import feedBack from '@/view/components/feedBack.vue';
   export default {
+    components: { feedBack },
     name: 'orderTracking',
     data() {
       return {
@@ -301,5 +305,9 @@
     left w(230)
     top h(50)
     font-size w(20)
-
+.feedback {
+  position fixed;
+  right 0
+  bottom h(600)
+}
 </style>

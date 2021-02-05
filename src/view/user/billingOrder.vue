@@ -149,7 +149,7 @@
                 ]"
                 alt
               />
-              <span>{{ projectItem.name }}</span>
+              <span class="projectitem">{{ projectItem.name }}</span>
               <span class="billing-order-dialog-item-price"
                 >{{ projectItem.standard === 0 ? "运费：" : "" }}￥{{
                   projectItem.price
@@ -269,13 +269,17 @@
       :ark-info-state="arkInfoState"
       v-show="isSuccessShow"
     ></success>
+    <feed-back class="feedback">
+    </feed-back>
   </div>
 </template>
 
 <script>
 import wx from "weixin-js-sdk";
 import compress from "@/components/compress";
+import feedBack from '@/view/components/feedBack.vue';
 export default {
+  components: { feedBack },
   name: "billingOrder",
   data() {
     return {
@@ -371,6 +375,7 @@ export default {
         this.wxUserInfo = res.wxUserInfo;
         this.cars = res.cars;
         this.msg.name = res.wxUserInfo.trueName;
+        localStorage.setItem('trueName',this.msg.name)
         // this.getStoreProject(res.newUser)
         this.newUser = res.newUser;
         if (this.$route.query.licensePlate) {
@@ -940,6 +945,9 @@ w(n) {
 }
 
 .is-old {
+  position:relative;
+  top:w(18);
+  left:w(10);
   color: #AFAEAE;
 }
 
@@ -951,12 +959,21 @@ w(n) {
   .billing-order-dialog-item {
     padding: h(30) w(30) h(30) 0;
     border-bottom: $border-gray;
+    position:relative;
 
     div {
       width: w(450);
-      margin-left: w(70);
+      margin-left: w(60);
       margin-top: h(20);
       font-size: w(25);
+    }
+    .projectitem{
+      font-size:w(30)
+      width:w(350);
+      position:absolute;
+      top:w(10);
+      left:0;
+      padding:w(20) 0 w(20) w(70)
     }
   }
 
@@ -1034,4 +1051,10 @@ w(n) {
   border-bottom: 1px solid #ebebeb;
   line-height: h(60);
 }
+.feedback {
+  position fixed;
+  right 0
+  bottom h(600)
+}
+
 </style>

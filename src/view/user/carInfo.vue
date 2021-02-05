@@ -85,12 +85,17 @@
     <router-link to="/login">
       <button class="big-gray-btn">取消</button>
     </router-link>
+     <feed-back class="feedback">
+    </feed-back>
   </div>
 </template>
 
 <script>
 import compress from "@/components/compress";
+import feedBack from '@/view/components/feedBack.vue';
+
 export default {
+  components: { feedBack },
   name: "userInfo",
   data() {
     return {
@@ -497,5 +502,11 @@ w(n) {
   line-height: 14px;
   border-radius:0px;
   background-color: #ffffff;
+}
+
+.feedback {
+  position fixed;
+  right 0
+  bottom h(600)
 }
 </style>

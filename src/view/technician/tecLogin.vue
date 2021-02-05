@@ -18,9 +18,7 @@
         <button :class="loginBtn" @click="logIn">登录</button>
       </div>
       <div class="userbtn">
-        <router-link to="/login">
-          用户登录
-        </router-link>
+        <router-link to="/login"> 用户登录 </router-link>
       </div>
     </div>
   </div>
@@ -52,14 +50,7 @@ export default {
     };
   },
   mounted() {
-    // console.log(localStorage.getItem('frompage'))
-    this.redirect = this.$route.query.redirect;
-    //获取redirect的值并缓存，当值存在并改变时，改变redirect的值
-    if (typeof this.$route.query.redirect !== "undefined") {
-      localStorage.setItem("redirect", this.redirect);
-    }
-    console.log(localStorage.getItem("redirect"));
-    this.isweixin();
+      this.isweixin();
   },
   methods: {
     // 登录
@@ -99,84 +90,62 @@ export default {
     //判断受否是微信内置浏览器
     isweixin() {
       //判断是否是微信浏览器
-      let ua = window.navigator.userAgent.toLowerCase();
-      console.log("ua", ua);
-      if (ua.indexOf("micromessenger") !== -1) {
-        //判断是否存在code参数
-        // if(this.getQueryString("code")!=null){
-        //   console.log(this.getQueryString("code"))
-        //   this.code = this.getQueryString("code")
-        //   console.log("第一次code"+this.code)
+        let ua = window.navigator.userAgent.toLowerCase();
+        console.log("ua", ua);
+        if (ua.indexOf("micromessenger") !== -1) {
+          //判断是否存在code参数
+          if (this.getQueryString("code") != null) {
+            this.code = this.getQueryString("code");
+              //将code保存起
+              //获取个人信息
+              this.$get("/wechat/config/getWeChatUserInfo", {
+                code: this.code,
+              }).then((res) => {
+                console.log(res);
+                this.userInfo = res;
+                // localStorage.setItem("userinfo",JSON.stringify(this.userInfo))
+                localStorage.setItem("openId", this.userInfo.openid);
+                localStorage.setItem("subscribe", this.userInfo.subscribe);
+                localStorage.setItem("nickName", this.userInfo.nickname);
+                localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
+                console.log(localStorage.getItem("subscribe"));
 
-        //   // 页面里的code和localstorage里的一样
-        //   if(this.code===localStorage.getItem("code")){
-        //     this.userInfo.openid=localStorage.getItem('openId')
-        //     this.userInfo.headimgurl=localStorage.getItem('headImgUrl')
-        //     this.userInfo.nickname=localStorage.getItem('nickName')
-        //     this.userInfo.subscribe=localStorage.getItem('subscribe')
-        //     // this.userInfo =JSON.parse(localStorage.getItem("userinfo"))
-        //     // localStorage.setItem('openid',this.userinfo.openid)
-        //     // localStorage.setItem('subscribe',this.userinfo.subscribe)
-        //     console.log(localStorage.getItem('subscribe'))
+                if (localStorage.getItem("subscribe") == "false") {
+                  window.location.href =
+                    "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
+                }
+              }).catch((e)=>{
+                console.log(e)
+              });
+          } else {
+            //console.log('未授权')
 
-        //     if(localStorage.getItem('subscribe') == "false"){
-        //       window.location.href = "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd"
-        //     }
-        //   }else{
-        //     //将code保存起来
-        //     localStorage.setItem("code",this.code)
-        //     console.log("第二次code"+this.code)
-        //     //获取个人信息
-        //     this.$get('/wechat/config/getWeChatUserInfo',{
-        //       code:this.code
-        //     }).then(res=>{
-        //       console.log(res)
-        //       this.userInfo = res
-        //       // localStorage.setItem("userinfo",JSON.stringify(this.userInfo))
-        //       console.log("第一次"+this.userInfo.openid)
-        //       console.log("第二次"+this.userInfo.openid)
-        //       //this.saveopenid({openid:this.userInfo.openid})//保存openid
-        //       localStorage.setItem('openId',this.userInfo.openid)
-        //       localStorage.setItem('subscribe',this.userInfo.subscribe)
-        //       localStorage.setItem('nickName',this.userInfo.nickname)
-        //       localStorage.setItem('headImgUrl',this.userInfo.headimgurl)
-        //       console.log(localStorage.getItem('subscribe'))
+            //开发
+            // window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3A%2F%2Fwww.freelycar.cn%2Fwechat%2FtecLogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect"
 
-        //       if(localStorage.getItem('subscribe') == "false"){
-        //         window.location.href = "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd"
-        //       }
-
-        //     })
-        //   }
-        // }else{
-        //   //console.log('未授权')
-
-        //   //开发
-        //   window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3A%2F%2Fwww.freelycar.cn%2Fwechat%2FtecLogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect"
-
-        //   // 部署
-        //   // window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3A%2F%2Fwww.freelycar.com%2Fwechat%2FtecLogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect"
-
-        // }
-        this.userInfo = {
-          city: "杭州",
-          gender: "男",
-          headimgurl:
-            "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJiamoz5DKExvibiaWlHZZQVQjHm2ueicIM0rENicVo0kKJAdArxP0hjK3NicnXGxs5w9DaTXZRHibmwKnew/132",
-          nickname: "Baiye",
-          openid: "oBaSqs8HZFzGxJpZGePKt1kkckOk",
-          province: "浙江",
-          subscribe: true,
-        };
-        localStorage.setItem("openId", this.userInfo.openid);
-        localStorage.setItem("subscribe", this.userInfo.subscribe);
-        localStorage.setItem("nickName", this.userInfo.nickname);
-        localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
-      } else {
-        console.log("请在微信客户端打开！");
-        return false;
-      }
-      console.log(this.userInfo);
+            // 部署
+            window.location.href =
+              "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3A%2F%2Fwww.freelycar.com%2Fwechat%2FtecLogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
+          }
+          // this.userInfo = {
+          //   city: "杭州",
+          //   gender: "男",
+          //   headimgurl:
+          //     "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJiamoz5DKExvibiaWlHZZQVQjHm2ueicIM0rENicVo0kKJAdArxP0hjK3NicnXGxs5w9DaTXZRHibmwKnew/132",
+          //   nickname: "Baiye",
+          //   openid: "oBaSqs8HZFzGxJpZGePKt1kkckOk",
+          //   province: "浙江",
+          //   subscribe: true,
+          // };
+          // localStorage.setItem("openId", this.userInfo.openid);
+          // localStorage.setItem("subscribe", this.userInfo.subscribe);
+          // localStorage.setItem("nickName", this.userInfo.nickname);
+          // localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
+        } else {
+          console.log("请在微信客户端打开！");
+          return false;
+        }
+        console.log(this.userInfo);
     },
 
     //判断参数是否存在
@@ -208,7 +177,7 @@ h(n) {
 }
 
 w(n) {
-  (n / 7.5vw);
+  ((n / 7.5vw));
 }
 
 .login {
@@ -313,5 +282,10 @@ w(n) {
 .userbtn button {
   font-size: w(28);
   color: #a9a9a9;
+}
+.feedback {
+  position fixed;
+  right 0
+  bottom h(600)
 }
 </style>

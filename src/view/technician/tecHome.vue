@@ -2,7 +2,7 @@
   <div class="user-home">
     <div class="my-info">
       <img class="my-info-photo" :src="staffInfo.headImgUrl" alt="头像">
-      <span class="name">{{staffInfo.name}}</span>
+      <span class="name">{{staffInfo.trueName}}</span>
       <span class="my-info-other">{{staffInfo.gender}}  ·  {{staffInfo.province}}  ·  {{staffInfo.city}}</span>
     </div>
 
@@ -69,6 +69,7 @@
         this.$get('/wechat/employee/detail',{
           id:localStorage.getItem('employeeId')
         }).then(res=>{
+          console.log(res)
           this.staffInfo=res
         })
       },

@@ -98,12 +98,16 @@
     <div v-show="msg.length > 0 ? msg[0].state >= 3 : true">
       <button class="big-blue-btn" @click="scan">扫码预约</button>
     </div>
+    <feed-back class="feedback">
+    </feed-back>
   </div>
 </template>
 
 <script>
 import wx from "weixin-js-sdk";
+import feedBack from '@/view/components/feedBack.vue';
 export default {
+  components: { feedBack },
   name: "myOrder",
   data() {
     return {
@@ -280,7 +284,7 @@ export default {
   },
   mounted: function () {
     this.wxConfig();
-    if (localStorage.getItem("staffId")) {
+    if (localStorage.getItem("employeeId")) {
       this.$router.push({ path: "/order" });
     } else {
       this.arkSn = localStorage.getItem("arkSn");
@@ -498,5 +502,10 @@ w(n) {
   position absolute
   right h(-60)
   top h(400)
+}
+.feedback {
+  position fixed;
+  right 0
+  bottom h(600)
 }
 </style>

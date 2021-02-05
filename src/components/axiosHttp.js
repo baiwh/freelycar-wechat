@@ -59,8 +59,8 @@ axios.interceptors.response.use(response => {
   return Promise.resolve(error.response)
 })
 
-var api = '/test';
-// var api = '/api';
+// var api = '/test';
+var api = '/api';
 
 export function get(url, params = {}) {
   return new Promise((resolve, reject) => {
@@ -73,12 +73,11 @@ export function get(url, params = {}) {
         } else {
           if (response.data.msg) {
             reject(response.data.msg)
-            alert('msg:'+response.data.msg)
+            // alert('msg:'+response.data.msg)
           }
         }
       })
       .catch(err => {
-        alert('err:'+err)
         reject(err)
       })
   })
@@ -98,11 +97,11 @@ export function post(url, data = {}) {
           //报错
           if (response.data.msg) {
             reject(response.data.msg)
-            alert('msg:'+response.data.msg)
+            // alert('msg:'+response.data.msg)
           }
         }
       }, err => {
-        alert('err:'+err)
+        // alert('err:'+err)
         reject(err)
       })
   })

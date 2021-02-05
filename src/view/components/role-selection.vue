@@ -10,11 +10,15 @@
       :ark-info-state="arkInfoState"
       v-show="isSuccessShow"
     ></success>
+    <link-failure
+      v-show="isFailure"
+    ></link-failure>
   </div>
 </template>
 
 <script>
 import wx from "weixin-js-sdk";
+import LinkFailure from './linkFailure.vue';
 export default {
   data() {
     return {
@@ -28,18 +32,24 @@ export default {
       doorId: "",
       usertimer: null,
       emtimer: null,
+      isFailure:false,
+      createTime:"",
+      timestamp:"",
     };
   },
+  components:{
+    LinkFailure
+  },
   mounted() {
-    // console.log(localStorage.getItem('frompage'))
-    this.redirect = this.$route.query.redirect;
-    //获取redirect的值并缓存，当值存在并改变时，改变redirect的值
-    if (typeof this.$route.query.redirect !== "undefined") {
-      localStorage.setItem("redirect", this.redirect);
-    }
+    this.createTime = this.$route.query.createTime
+    this.timestamp = Date.parse( new Date() ).toString().substr(0,10);
     this.arkSn = this.$route.params.arkSn;
     localStorage.setItem("arkSn", this.arkSn);
-    this.checkSubscribe();
+    if(this.createTime && (this.timestamp-this.createTime)>300){
+      this.isFailure = true;
+    }else{
+      this.isLogin();
+    }
   },
   beforeDestroy() {
     clearInterval(this.usertimer);
@@ -100,16 +110,21 @@ export default {
               if (res[0].isBuffer) {
                 //判断柜子是否未关闭
                 this.getDoorState(res[0].id);
-                //3秒请求一次定时器获取柜门状态
+                //3秒请求一次定时器
                 this.emtimer = setInterval(() => {
                   this.$get("/wechat/order/getDoorState", {
                     orderId: res[0].id,
                   }).then((stateres) => {
-                    // console.log(stateres);
-                    if(!stateres.isBuffer){
+                    console.log(stateres);
+                    if (!stateres.isBuffer && !stateres.isUser) {
                       clearInterval(this.emtimer);
                       this.$refs.successArk.changeTxt("tecFinish");
                       this.isSuccessShow = true;
+                      setTimeout(() => {
+                        this.$router.push({ path: "/order" });
+                      }, 1000);
+                    } else if (stateres.isUser) {
+                      clearInterval(this.emtimer);
                       setTimeout(() => {
                         this.$router.push({ path: "/order" });
                       }, 1000);
@@ -140,12 +155,14 @@ export default {
       this.$get("/wechat/order/getDoorState", {
         orderId: id,
       }).then((stateres) => {
-        // console.log(stateres);
-        if (stateres.isBuffer) {
+        // console.log(stateres;
+        if (stateres.isBuffer && !stateres.isUser) {
           this.arkInfoState = "tecFinish";
           this.$refs.openDoor.changeTxt("tecFinish", stateres.doorSn);
           this.isOpenDoorShow = true;
         }
+      }).catch((res)=>{
+        console.log(res);
       });
     },
 
@@ -158,6 +175,7 @@ export default {
         orderId: id,
         employeeId: localStorage.getItem("employeeId"),
       }).then((res) => {
+        console.log(res);
         setTimeout(() => {
           this.isOpenDoorShow = false;
           this.$router.push({ path: "/order" });
@@ -170,6 +188,7 @@ export default {
       this.$get("/wechat/ark/getArkInfo", {
         arkSn: this.arkSn,
       }).then((res) => {
+        // console.log(res)
         localStorage.setItem("arkName", res.name);
         if (res.storeId === localStorage.getItem("storeId")) {
           this.getOrderState();
@@ -208,11 +227,17 @@ export default {
                 this.$get("/wechat/order/getDoorState", {
                   orderId: res[0].id,
                 }).then((doorres) => {
-                  // console.log(res);
-                  if(!doorres.isBuffer) {
+                  // console.log(doorres);
+                  if (doorres.isUser && !doorres.isBuffer) {
                     clearInterval(this.usertimer);
                     this.$refs.successArk.changeTxt("billingOrder");
                     this.isSuccessShow = true;
+                    setTimeout(() => {
+                      this.$router.push({ path: "/myOrder" });
+                    }, 1000);
+                    //如果是技师开柜
+                  } else if (!doorres.isUser) {
+                    clearInterval(this.usertimer);
                     setTimeout(() => {
                       this.$router.push({ path: "/myOrder" });
                     }, 1000);
@@ -226,7 +251,7 @@ export default {
               this.$get("/wechat/ark/getStaffKeyLocation", {
                 orderId: res[0].id,
               }).then((newres) => {
-                console.log(newres);
+                // console.log(newres);
                 this.arkInfoState = "payOrder";
                 let local = newres.staffKeyLocation.split("-");
                 this.$refs.openDoor.changeTxt("payOrder", local[1]);
@@ -260,12 +285,12 @@ export default {
           console.log("捕捉测试err", err);
         });
     },
-    getUserDoorState(id){
+    getUserDoorState(id) {
       this.$get("/wechat/order/getDoorState", {
         orderId: id,
       }).then((stateres) => {
-        // console.log(stateres);
-        if (stateres.isBuffer) {
+        console.log(stateres);
+        if (stateres.isBuffer && stateres.isUser) {
           this.arkInfoState = "billingOrder";
           this.$refs.openDoor.changeTxt("billingOrder", stateres.doorSn);
           this.isOpenDoorShow = true;
@@ -287,37 +312,36 @@ export default {
     },
     //判断是否存在code参数
     checkSubscribe() {
-      this.isLogin();
-      // if (this.getQueryString("code") != null) {
-      //   this.code = this.getQueryString("code");
-      //   localStorage.setItem("code", this.code);
-      //   console.log("code:" + this.code);
-      //   //获取个人信息
-      //   this.$get("/wechat/config/getWeChatUserInfo", {
-      //     code: this.code,
-      //   }).then((res) => {
-      //     console.log(res);
-      //     console.log(res.subscribe);
-      //     localStorage.setItem("subscribe", res.subscribe);
-      //     console.log("是否关注微信公众号" + localStorage.getItem("subscribe"));
-      //     // 是否关注公众号
-      //     if (localStorage.getItem("subscribe") == "false") {
-      //       window.location.href =
-      //         "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
-      //     } else {
-      //       this.isLogin();
-      //     }
-      //   });
-      // } else {
-      //   //console.log('未授权')
-      //   // 开发
-      //   window.location.href =
-      //     "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2frole-select%2f" +
-      //     this.arkSn +
-      //     "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
-      //   // window.location.href ="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2frole-select%2f" +this.arkSn +"&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
-      //   // 线上
-      // }
+      if (this.getQueryString("code") != null) {
+        this.code = this.getQueryString("code");
+        localStorage.setItem("code", this.code);
+        console.log("code:" + this.code);
+        //获取个人信息
+        this.$get("/wechat/config/getWeChatUserInfo", {
+          code: this.code,
+        }).then((res) => {
+          // console.log(res);
+          // console.log(res.subscribe);
+          localStorage.setItem("subscribe", res.subscribe);
+          // console.log("是否关注微信公众号" + localStorage.getItem("subscribe"));
+          // 是否关注公众号
+          if (localStorage.getItem("subscribe") == "false") {
+            window.location.href =
+              "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
+          } else {
+            this.isLogin();
+          }
+        });
+      } else {
+        //console.log('未授权')
+        // 开发
+        // window.location.href =
+        //   "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2frole-select%2f" +
+        //   this.arkSn +
+        //   "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+        window.location.href ="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2frole-select%2f" +this.arkSn +"&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
+        // 线上
+      }
     },
 
     //判断参数是否存在

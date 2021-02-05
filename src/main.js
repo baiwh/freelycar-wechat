@@ -12,6 +12,7 @@ import VueClipboard from 'vue-clipboard2'
 import openDoor from './view/components/openDoor'
 import success from './view/components/success'
 import {scan} from "./components/scanCode"
+import feedBack from './view/components/feedBack'
 Vue.prototype.scan = scan
 Vue.use(VueClipboard)
 Vue.config.productionTip = false
@@ -27,6 +28,7 @@ Vue.prototype.$post = post
 
 Vue.component('openDoor', openDoor)
 Vue.component('success', success)
+Vue.component('feedBack',feedBack)
 
 
 router.afterEach((to, from, next) => {

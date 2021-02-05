@@ -263,12 +263,16 @@
       />
       <img @click="getOrders" src="./../../assets/search.png" alt />
     </div>
+    <feed-back class="feedback">
+    </feed-back>
   </div>
 </template>
 
 <script>
 import wx from "weixin-js-sdk";
+import feedBack from '@/view/components/feedBack.vue';
 export default {
+components: { feedBack },
   name: "order",
   data() {
     return {
@@ -364,7 +368,7 @@ export default {
     // 获取车辆照片
     showCarImg(item) {
       // console.log(item)
-      if(item && item.carImageUrl){
+      if(item && item.carImageUrl && !item.clientOrderImgUrl){
         this.carImageUrls = item.carImageUrl.split( ',' );
         this.imglength = this.carImageUrls.length;
         this.carImageUrl = this.carImageUrls[0];
@@ -532,7 +536,7 @@ export default {
     // 微信注入权限
       wxConfig() {
         this.$get('/wechat/config/getJSSDKConfig',{
-            targetUrl:location.href
+            targetUrl:"https://www.freelycar.com/wechat/order"
           }
         ).then(res => {
           this.configInfo = res
@@ -579,7 +583,6 @@ export default {
       },
   },
   mounted: function () {
-    this.wxConfig();
     this.getOrders();
     this.getFinishOrders();
     this.getOrderList(); //已接到
@@ -587,6 +590,7 @@ export default {
     if (this.$route.query.tabBar) {
       this.tabBar = this.$route.query.tabBar;
     }
+    this.wxConfig();
   },
 };
 </script>
@@ -881,5 +885,10 @@ w(n) {
   position absolute
   right h(-60)
   top h(400)
+}
+.feedback {
+  position fixed;
+  right 0
+  bottom h(600)
 }
 </style>

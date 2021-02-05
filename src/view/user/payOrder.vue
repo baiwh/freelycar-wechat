@@ -109,14 +109,18 @@
 
     <open-door ref="openDoor" :ark-info-state="arkInfoState" v-show="isOpenDoorShow"></open-door>
     <success ref="successArk" :ark-info-state="arkInfoState" v-show="isSuccessShow"></success>
+     <feed-back class="feedback">
+    </feed-back>
   </div>
 </template>
 
 <script>
   import { MessageBox } from 'mint-ui'
   import wx from 'weixin-js-sdk'
+  import feedBack from '@/view/components/feedBack.vue';
 
   export default {
+    components: { feedBack },
     name: 'payOrder',
     data() {
       return {
@@ -637,5 +641,10 @@
   position absolute
   right h(-60)
   top h(400)
+}
+.feedback {
+  position fixed;
+  right 0
+  bottom h(600)
 }
 </style>

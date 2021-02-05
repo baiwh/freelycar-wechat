@@ -167,12 +167,16 @@
       :ark-info-state="arkInfoState"
       v-show="isSuccessShow"
     ></success>
+    <feed-back class="feedback">
+    </feed-back>
   </div>
 </template>
 
 <script>
 import compress from "@/components/compress";
+import feedBack from '@/view/components/feedBack.vue';
 export default {
+  components: { feedBack },
   name: "orderDetail",
   data() {
     return {
@@ -445,7 +449,7 @@ export default {
         orderId: this.orderId,
       }).then((stateres) => {
         console.log(stateres);
-        if (stateres.isBuffer && stateres.doorSn !== null) {
+        if (stateres.isBuffer) {
           this.arkInfoState = "tecFinish";
           this.$refs.openDoor.changeTxt("tecFinish", stateres.doorSn);
           this.isOpenDoorShow = true;
@@ -468,12 +472,17 @@ export default {
           this.$get("/wechat/ark/getEmptyDoor", {
             arkSn: this.arkSn,
           }).then((res) => {
-            console.log(res)
+            console.log(res);
             this.arkInfoState = "tecFinish";
             this.$refs.openDoor.changeTxt("tecFinish", res.doorSn);
             this.isOpenDoorShow = true;
             this.finishOpenDoor(res.id);
           });
+        } else if (!stateres.isBuffer && stateres.doorSn != null) {
+          this.arkInfoState = "tecFinish";
+          this.$refs.openDoor.changeTxt("tecFinish", stateres.doorSn);
+          this.isOpenDoorShow = true;
+          this.finishOpenDoor(stateres.doorSn);
         }
       });
     },
@@ -545,7 +554,7 @@ h(n) {
 }
 
 w(n) {
-  ((((((n / 7.5vw))))));
+  (((((((n / 7.5vw)))))));
 }
 
 .order-detail-key {
@@ -745,5 +754,10 @@ w(n) {
   position: absolute;
   right: h(-60);
   top: h(400);
+}
+.feedback {
+  position fixed;
+  right 0
+  bottom h(600)
 }
 </style>

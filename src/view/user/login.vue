@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { Indicator } from "mint-ui";
 import wx from "weixin-js-sdk";
 export default {
   name: "login",
@@ -58,27 +59,22 @@ export default {
     };
   },
   mounted() {
-    this.redirect = this.$route.query.redirect;
-    if (this.$route.query.arkSn) {
-      localStorage.setItem("arkSn", this.$route.query.arkSn);
-      this.arkSn = this.$route.query.arkSn;
-    } else {
-      this.arkSn = localStorage.getItem("arkSn");
-    }
-    //获取redirect的值并缓存，当值存在并改变时，改变redirect的值
-    if (typeof this.$route.query.redirect !== "undefined") {
-      localStorage.setItem("redirect", this.redirect);
-    }
-    console.log(localStorage.getItem("redirect"));
-    this.isweixin();
+      if (this.$route.query.arkSn) {
+        console.log(this.$route.query.arkSn)
+        localStorage.setItem("arkSn", this.$route.query.arkSn);
+        this.arkSn = this.$route.query.arkSn;
+      } else {
+        this.arkSn = localStorage.getItem("arkSn");
+      }
+      this.isweixin();
   },
   methods: {
     // 获取验证码
     getCode() {
       if (this.phone.length === 11) {
         if (this.passwordInfo == "获取验证码") {
-          this.$post("/wechat/login/getSmsCode?phone=" + this.phone).then(
-            (res) => {
+          this.$post("/wechat/login/getSmsCode?phone=" + this.phone)
+            .then((res) => {
               let info = setInterval(() => {
                 if (this.getCodeInfoTime !== 0) {
                   this.getCodeInfoTime -= 1;
@@ -94,12 +90,14 @@ export default {
                 type: "txt",
               });
               this.toast.show();
-            }
-          );
+            })
+            .catch((e) => {
+              alert(e)
+            });
         }
       } else {
         this.toast = this.$createToast({
-          txt: "请输入正确的手机号",
+          txt: "请输入正确的手机号!",
           type: "txt",
         });
         this.toast.show();
@@ -109,6 +107,10 @@ export default {
     // 登录
     logIn() {
       if (this.phone.length === 11 && this.password.length === 6) {
+        Indicator.open({
+          text: "正在登陆",
+          spinnerType: "fading-circle",
+        });
         this.$post(
           "/wechat/login/verifySmsCode?phone=" +
             this.phone +
@@ -138,7 +140,9 @@ export default {
           localStorage.setItem("trueName", this.wxUserInfo.trueName);
           localStorage.setItem("Authorization", "Bearer " + res.jwt);
           // // 判断是否存在柜子码
-          if (localStorage.getItem("arkSn")) {
+          Indicator.close();
+          
+          if (localStorage.getItem("arkSn")!="undefined" && localStorage.getItem("arkSn")) {
             // 检查柜子信息，看是否需要换网点
             this.getArkInfo();
           } else {
@@ -147,7 +151,7 @@ export default {
         });
       } else {
         this.toast = this.$createToast({
-          txt: "请输入正确的手机号或验证码",
+          txt: "请输入正确的手机号或验证码!",
           type: "txt",
         });
         this.toast.show();
@@ -181,67 +185,53 @@ export default {
     //判断受否是微信内置浏览器
     isweixin() {
       //判断是否是微信浏览器
-      let ua = window.navigator.userAgent.toLowerCase();
-      console.log("ua", ua);
-      if (ua.indexOf("micromessenger") !== -1) {
-        this.isCode();
-      } else {
-        console.log("请在微信客户端打开！");
-        this.toast.show();
-        return false;
-      }
+        let ua = window.navigator.userAgent.toLowerCase();
+        console.log("ua", ua);
+        if (ua.indexOf("micromessenger") !== -1) {
+          this.isCode();
+        } else {
+          console.log("请在微信客户端打开！");
+          this.toast.show();
+          return false;
+        }
     },
 
     //判断是否存在code参数
     isCode() {
-      // if (this.getQueryString("code") != null) {
-      //   this.code = this.getQueryString("code");
-      //   console.log("第一次code" + this.code);
-      //   // 页面里的code和localstorage里的一样
-      //   if (this.code === localStorage.getItem("code")) {
-      //     this.userInfo.openid = localStorage.getItem("openId");
-      //     this.userInfo.headimgurl = localStorage.getItem("headImgUrl");
-      //     this.userInfo.nickname = localStorage.getItem("nickName");
-      //     this.userInfo.subscribe = localStorage.getItem("subscribe");
-      //     console.log(
-      //       "1是否关注微信公众号" + localStorage.getItem("subscribe")
-      //     );
-      //     // 是否关注公众号
-      //     if (localStorage.getItem("subscribe") == "false") {
-      //       window.location.href =
-      //         "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
-      //     }
-      //   } else {
-      //     //将code保存起来
-      //     localStorage.setItem("code", this.code);
-      //     console.log("第二次code" + this.code);
-      //     //获取个人信息
-      //     this.$get("/wechat/config/getWeChatUserInfo", {
-      //       code: this.code,
-      //     }).then((res) => {
-      //       console.log(res);
-      //       this.userInfo = res;
-      //       localStorage.setItem("openId", this.userInfo.openid);
-      //       localStorage.setItem("subscribe", this.userInfo.subscribe);
-      //       localStorage.setItem("nickName", this.userInfo.nickname);
-      //       localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
-      //       console.log(
-      //         "2是否关注微信公众号" + localStorage.getItem("subscribe")
-      //       );
-      //       // 是否关注公众号
-      //       if (localStorage.getItem("subscribe") == "false") {
-      //         window.location.href =
-      //           "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
-      //       }
-      //     });
-      //   }
-      // } else {
-      //   //console.log('未授权')
-      //   // 开发
-      //   window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect'
-      //   // window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
-      //   // 线上
-      // }
+      if (this.getQueryString("code") != null) {
+        this.code = this.getQueryString("code");
+          //获取个人信息
+          this.$get("/wechat/config/getWeChatUserInfo", {
+            code: this.code,
+          })
+            .then((res) => {
+              console.log(res);
+              this.userInfo = res;
+              localStorage.setItem("openId", this.userInfo.openid);
+              localStorage.setItem("subscribe", this.userInfo.subscribe);
+              localStorage.setItem("nickName", this.userInfo.nickname);
+              localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
+              console.log(
+                "2是否关注微信公众号" + localStorage.getItem("subscribe")
+              );
+              // 是否关注公众号
+              if (localStorage.getItem("subscribe") == "false") {
+                window.location.href =
+                  "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
+              }
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+      } else {
+        //console.log('未授权')
+        // 开发
+        // window.location.href =
+        //   "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
+        // window.location.href =
+        //   "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
+        // 线上
+      }
       //用户
       this.userInfo = {
         city: "杭州",
@@ -252,11 +242,13 @@ export default {
         openid: "oBaSqs8HZFzGxJpZGePKt1kkckOk",
         province: "浙江",
         subscribe: true,
+        trueName:"刘卫国",
       };
       localStorage.setItem("openId", this.userInfo.openid);
       localStorage.setItem("subscribe", this.userInfo.subscribe);
       localStorage.setItem("nickName", this.userInfo.nickname);
       localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
+      localStorage.setItem("trueName", this.userInfo.trueName);
     },
 
     //判断参数是否存在
@@ -344,7 +336,7 @@ h(n) {
 }
 
 w(n) {
-  (((n / 7.5vw)));
+  ((((((n / 7.5vw))))));
 }
 
 .login {
@@ -457,5 +449,11 @@ w(n) {
 .tecbtn button {
   font-size: w(28);
   color: #a9a9a9;
+}
+
+.feedback {
+  position fixed;
+  right 0
+  bottom h(600)
 }
 </style>

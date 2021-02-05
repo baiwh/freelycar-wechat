@@ -1,20 +1,25 @@
 <template>
   <div class="open-door">
     <img class="open-door-img" src="./../../assets/open-door.png" alt="">
-    <span class="doorInfo" v-html="arkInfo.text1"></span>
-    <span>{{arkInfo.text2}}<br>{{arkInfo.text3}}</span>
+    <span class="doorInfo" >{{arkInfo.text1}}<strong class="highlight">&nbsp;{{doorSn}}&nbsp;</strong><span class="doorInfo" v-html="arkInfo.text2"></span></span>
+    <span>{{arkInfo.text3}}</span>
     <div class="open-door-loading">
       <img class="open-door-car" src="./../../assets/loading-car.png" alt="">
       <div></div>
     </div>
+    <feed-back class="feedback">
+    </feed-back>
   </div>
 </template>
 
 <script>
+import feedBack from '@/view/components/feedBack.vue';
   export default {
+    components: { feedBack },
     name: 'openDoor',
     data() {
       return {
+        doorSn:'',
         arkInfo:{
           text1:'',
           text2:''
@@ -26,32 +31,33 @@
     ],
     methods: {
       changeTxt(state,doorSn){
+        this.doorSn = doorSn;
         switch (state){
           case 'billingOrder':{
-            this.arkInfo={text1:doorSn+'号柜门正在打开，请勿离开', text2:'柜门打开，请放入钥匙，并关闭柜门',text3:''}
+            this.arkInfo={text1:'正在打开',text2:'号柜门,请勿离开', text3:'柜门打开，请放入钥匙，并关闭柜门',}
           }
             break
           case 'cancelOrder':{
-            this.arkInfo={text1:doorSn+`打开</br>请取走钥匙，并关闭柜门`, text2:'',text3:''}
+            this.arkInfo={text1:'正在打开', text2:`</br>请取走钥匙，并关闭柜门`,text3:'柜门打开，请取走钥匙，并关闭柜门'}
           }
             break
           case 'payOrder':{
-            this.arkInfo={text1:doorSn+`打开</br>请取走钥匙，并关闭柜门`, text2:'谢谢您的支持！',text3:''}
+             this.arkInfo={text1:'正在打开', text2:`</br>请取走钥匙，并关闭柜门`,text3:'谢谢您的支持！'}
           }
             break
           case 'tecGetKey':{
-            this.arkInfo={text1:doorSn+'正在打开，请勿离开', text2:'柜门打开，请取走钥匙，并关闭柜门',text3:''}
+            this.arkInfo={text1:'正在打开',text2:',请勿离开', text3:'柜门打开，请取走钥匙，并关闭柜门',}
           }
             break
           case 'tecFinish':{
-            this.arkInfo={text1:doorSn+'号柜门已打开', text2:'请将钥匙放入柜内，并关闭柜门',text3:''}
+            this.arkInfo={text1:'正在打开',text2:'号柜门,请勿离开', text3:'柜门打开，请放入钥匙，并关闭柜门',}
           }
             break
         }
       }
     },
     mounted: function () {
-      // this.arkInfo={text1:`号柜门正在打开，请勿离开`, text2:'柜门打开，请放入钥匙，并关闭柜门',text3:''}
+            //  this.arkInfo={text1:'正在打开', text2:`号柜门</br>请取走钥匙，并关闭柜门`,text3:'谢谢您的支持！'}
 
     }
   }
@@ -88,7 +94,12 @@
   .open-door .doorInfo{
   color: #D9001B;
   font-size w(38);
-  line-height w(50)
+  line-height w(60)
+
+  .highlight{
+    font-size w(80)
+    font-weight:bold
+  }
 }
 
   .open-door-img
@@ -115,5 +126,9 @@
       top h(-32)
       position relative
 
-
+.feedback {
+  position fixed;
+  right 0
+  bottom h(600)
+}
 </style>
