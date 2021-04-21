@@ -181,7 +181,7 @@ export default {
   data() {
     return {
       msg: "",
-      arkInfoState: "tecGetKey",
+      arkInfoState: "",
       orderArkSn: "",
       arkSn: "",
       orderId: "",

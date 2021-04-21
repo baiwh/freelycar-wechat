@@ -59,14 +59,14 @@ export default {
     };
   },
   mounted() {
-      if (this.$route.query.arkSn) {
-        console.log(this.$route.query.arkSn)
-        localStorage.setItem("arkSn", this.$route.query.arkSn);
-        this.arkSn = this.$route.query.arkSn;
-      } else {
-        this.arkSn = localStorage.getItem("arkSn");
-      }
-      this.isweixin();
+    if (this.$route.query.arkSn) {
+      console.log(this.$route.query.arkSn);
+      localStorage.setItem("arkSn", this.$route.query.arkSn);
+      this.arkSn = this.$route.query.arkSn;
+    } else {
+      this.arkSn = localStorage.getItem("arkSn");
+    }
+    this.isweixin();
   },
   methods: {
     // 获取验证码
@@ -122,33 +122,42 @@ export default {
             this.userInfo.headimgurl +
             "&nickName=" +
             this.userInfo.nickname
-        ).then((res) => {
-          console.log(res.wxUserInfo);
-          this.wxUserInfo = res.wxUserInfo;
-          // this.axios.defaults.headers.common["Authorization"] = res.jwt
-          localStorage.setItem("jwt", res.jwt);
-          localStorage.setItem("phone", this.wxUserInfo.phone);
-          localStorage.setItem("clientId", this.wxUserInfo.defaultClientId);
-          localStorage.setItem("id", this.wxUserInfo.id);
-          localStorage.setItem("openId", this.wxUserInfo.openId);
-          localStorage.setItem("storeId", this.wxUserInfo.defaultStoreId);
-          localStorage.setItem("storeName", this.wxUserInfo.defaultStoreName);
-          localStorage.setItem(
-            "storeAddress",
-            this.wxUserInfo.defaultStoreAddress
-          );
-          localStorage.setItem("trueName", this.wxUserInfo.trueName);
-          localStorage.setItem("Authorization", "Bearer " + res.jwt);
-          // // 判断是否存在柜子码
-          Indicator.close();
-          
-          if (localStorage.getItem("arkSn")!="undefined" && localStorage.getItem("arkSn")) {
-            // 检查柜子信息，看是否需要换网点
-            this.getArkInfo();
-          } else {
-            this.$router.push({ path: "/userHome" });
-          }
-        });
+        )
+          .then((res) => {
+            console.log(res.wxUserInfo);
+            this.wxUserInfo = res.wxUserInfo;
+            // this.axios.defaults.headers.common["Authorization"] = res.jwt
+            localStorage.setItem("jwt", res.jwt);
+            localStorage.setItem("phone", this.wxUserInfo.phone);
+            localStorage.setItem("clientId", this.wxUserInfo.defaultClientId);
+            localStorage.setItem("id", this.wxUserInfo.id);
+            localStorage.setItem("openId", this.wxUserInfo.openId);
+            localStorage.setItem("storeId", this.wxUserInfo.defaultStoreId);
+            localStorage.setItem("storeName", this.wxUserInfo.defaultStoreName);
+            localStorage.setItem("trueName",this.wxUserInfo.trueName)
+            localStorage.setItem(
+              "storeAddress",
+              this.wxUserInfo.defaultStoreAddress
+            );
+            localStorage.setItem("trueName", this.wxUserInfo.trueName);
+            localStorage.setItem("Authorization", "Bearer " + res.jwt);
+            // // 判断是否存在柜子码
+            Indicator.close()
+            console.log(localStorage.getItem("arkSn"));
+            if (
+              localStorage.getItem("arkSn")
+            ) {
+              // 检查柜子信息，看是否需要换网点
+              console.log(localStorage.getItem("arkSn"));
+              this.getArkInfo();
+            } else {
+              console.log("跳转");
+              this.$router.push({ path: "/userHome" });
+            }
+          }).catch((e)=>{
+            alert(e);
+            Indicator.close();
+          })
       } else {
         this.toast = this.$createToast({
           txt: "请输入正确的手机号或验证码!",
@@ -185,70 +194,71 @@ export default {
     //判断受否是微信内置浏览器
     isweixin() {
       //判断是否是微信浏览器
-        let ua = window.navigator.userAgent.toLowerCase();
-        console.log("ua", ua);
-        if (ua.indexOf("micromessenger") !== -1) {
-          this.isCode();
-        } else {
-          console.log("请在微信客户端打开！");
-          this.toast.show();
-          return false;
-        }
+      let ua = window.navigator.userAgent.toLowerCase();
+      console.log("ua", ua);
+      console.log(ua.indexOf("micromessenger"))
+      if (ua.indexOf("micromessenger") !== -1) {
+        this.isCode();
+      } else {
+        console.log("请在微信客户端打开！");
+        this.toast.show();
+        return false;
+      }
     },
 
     //判断是否存在code参数
     isCode() {
       if (this.getQueryString("code") != null) {
         this.code = this.getQueryString("code");
-          //获取个人信息
-          this.$get("/wechat/config/getWeChatUserInfo", {
-            code: this.code,
+        //获取个人信息
+        this.$get("/wechat/config/getWeChatUserInfo", {
+          code: this.code,
+        })
+          .then((res) => {
+            console.log(res);
+            this.userInfo = res;
+            localStorage.setItem("openId", this.userInfo.openid);
+            localStorage.setItem("subscribe", this.userInfo.subscribe);
+            localStorage.setItem("nickName", this.userInfo.nickname);
+            localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
+            console.log(
+              "2是否关注微信公众号" + localStorage.getItem("subscribe")
+            );
+            // 是否关注公众号
+            if (localStorage.getItem("subscribe") == "false") {
+              window.location.href =
+                "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
+            }
           })
-            .then((res) => {
-              console.log(res);
-              this.userInfo = res;
-              localStorage.setItem("openId", this.userInfo.openid);
-              localStorage.setItem("subscribe", this.userInfo.subscribe);
-              localStorage.setItem("nickName", this.userInfo.nickname);
-              localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
-              console.log(
-                "2是否关注微信公众号" + localStorage.getItem("subscribe")
-              );
-              // 是否关注公众号
-              if (localStorage.getItem("subscribe") == "false") {
-                window.location.href =
-                  "http://mp.weixin.qq.com/s?__biz=MzAxNDMwNDc3Mw==&mid=502678227&idx=1&sn=22cc3edc520a3058aa5b2aed5f376904&chksm=0397b1b934e038af1b3802e6b993461d18e5780b2349fe339c3fa82a3bee6586a3650d531ee4#rd";
-              }
-            })
-            .catch((e) => {
-              console.log(e);
-            });
+          .catch((e) => {
+            console.log(e);
+          });
       } else {
         //console.log('未授权')
         // 开发
         // window.location.href =
         //   "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=http%3a%2f%2fwww.freelycar.cn%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
-        // window.location.href =
-        //   "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
+        window.location.href =
+          "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxfd188f8284ee297b&redirect_uri=https%3a%2f%2fwww.freelycar.com%2fwechat%2flogin&response_type=code&scope=snsapi_userinfo&state=STATE&connect_redirect=1#wechat_redirect";
         // 线上
       }
       //用户
-      this.userInfo = {
-        city: "杭州",
-        gender: "男",
-        headimgurl:
-          "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJiamoz5DKExvibiaWlHZZQVQjHm2ueicIM0rENicVo0kKJAdArxP0hjK3NicnXGxs5w9DaTXZRHibmwKnew/132",
-        nickname: "Baiye",
-        openid: "oBaSqs8HZFzGxJpZGePKt1kkckOk",
-        province: "浙江",
-        subscribe: true,
-        trueName:"刘卫国",
-      };
-      localStorage.setItem("openId", this.userInfo.openid);
-      localStorage.setItem("subscribe", this.userInfo.subscribe);
-      localStorage.setItem("nickName", this.userInfo.nickname);
-      localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
-      localStorage.setItem("trueName", this.userInfo.trueName);
+      // this.userInfo = {
+      //   city: "杭州",
+      //   gender: "男",
+      //   headimgurl:
+      //     "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJiamoz5DKExvibiaWlHZZQVQjHm2ueicIM0rENicVo0kKJAdArxP0hjK3NicnXGxs5w9DaTXZRHibmwKnew/132",
+      //   nickname: "Baiye",
+      //   openid: "oBaSqs8HZFzGxJpZGePKt1kkckOk",
+      //   province: "浙江",
+      //   subscribe: true,
+      //   trueName: "刘卫国",
+      // };
+      // localStorage.setItem("openId", this.userInfo.openid);
+      // localStorage.setItem("subscribe", this.userInfo.subscribe);
+      // localStorage.setItem("nickName", this.userInfo.nickname);
+      // localStorage.setItem("headImgUrl", this.userInfo.headimgurl);
+      // localStorage.setItem("trueName", this.userInfo.trueName);
     },
 
     //判断参数是否存在
@@ -336,7 +346,7 @@ h(n) {
 }
 
 w(n) {
-  ((((((n / 7.5vw))))));
+  (((((((n / 7.5vw)))))));
 }
 
 .login {
@@ -452,8 +462,8 @@ w(n) {
 }
 
 .feedback {
-  position fixed;
-  right 0
-  bottom h(600)
+  position: fixed;
+  right: 0;
+  bottom: h(600);
 }
 </style>

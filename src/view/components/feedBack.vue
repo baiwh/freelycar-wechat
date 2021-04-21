@@ -161,8 +161,9 @@ export default {
   img {
     width: w(80);
     background-color: #f2f2f2;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    // box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     border-radius: 50%;
+    // z-index:3;
   }
 }
 </style>

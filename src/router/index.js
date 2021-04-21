@@ -131,6 +131,11 @@ export default new Router({
       path:'/feedBack',
       name:'feedBack',
       component: resolve => require(['@/view/components/feedBackPage.vue'],resolve),
+    },
+    {
+      path:'/activity',
+      name:'activity',
+      component:resolve => require(['@/view/components/activity.vue'],resolve)
     }
   ],
   base:'/wechat/',

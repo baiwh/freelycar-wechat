@@ -288,7 +288,7 @@ export default {
       this.$router.push({ path: "/order" });
     } else {
       this.arkSn = localStorage.getItem("arkSn");
-      if (localStorage.getItem("clientId")) {
+      if (localStorage.getItem("id")) {
         this.clientId = this.$route.query.id;
         // this.storePhone = localStorage.getItem('storePhone')
         this.getOrderList();

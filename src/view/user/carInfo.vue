@@ -93,6 +93,7 @@
 <script>
 import compress from "@/components/compress";
 import feedBack from '@/view/components/feedBack.vue';
+import { Indicator } from "mint-ui";
 
 export default {
   components: { feedBack },
@@ -264,9 +265,13 @@ export default {
     // 提交
     addCar() {
       if (this.licensePlate && this.chooseBrand.carline) {
+        Indicator.open({
+          text: "正在添加",
+          spinnerType: "fading-circle",
+        });
         this.$post("/wechat/client/addCar", {
           storeId: localStorage.getItem("storeId"),
-          clientId: localStorage.getItem("clientId"),
+          wxUserId:localStorage.getItem('id'),
           licensePlate: this.licensePlate,
           carBrand: this.chooseBrand.carline,
           carType: "",
@@ -275,7 +280,11 @@ export default {
           color: this.color,
           carImageUrl: this.carImageUrl,
         }).then((res) => {
+           Indicator.close();
           this.$router.push({ path: "/billingOrder" });
+        }).catch((res)=>{
+           Indicator.close();
+          alert(res)
         });
       } else {
         this.toast = this.$createToast({

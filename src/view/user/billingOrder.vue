@@ -30,7 +30,16 @@
         :key="index"
         >{{ item.projectName }}</span
       >
-      <!--<span class="billing-order-project-count">合计费用： {{trueOrderPrice}}元</span>-->
+      <a :href="['tel:' + loadPhone]" v-show="showPhone">
+        <span class="billing-order-project-phone">
+          <img
+            class="billing-order-phone"
+            src="./../../assets/callphone.png"
+            alt=""
+          />
+          详情请联系服务商</span
+        >
+      </a>
     </div>
 
     <div class="billing-order-card billing-order-position">
@@ -269,15 +278,14 @@
       :ark-info-state="arkInfoState"
       v-show="isSuccessShow"
     ></success>
-    <feed-back class="feedback">
-    </feed-back>
+    <feed-back class="feedback"> </feed-back>
   </div>
 </template>
 
 <script>
 import wx from "weixin-js-sdk";
 import compress from "@/components/compress";
-import feedBack from '@/view/components/feedBack.vue';
+import feedBack from "@/view/components/feedBack.vue";
 export default {
   components: { feedBack },
   name: "billingOrder",
@@ -329,6 +337,8 @@ export default {
         prop: "base64Value",
       },
       timer: null,
+      showPhone: false,
+      loadPhone: "",
     };
   },
   methods: {
@@ -375,7 +385,7 @@ export default {
         this.wxUserInfo = res.wxUserInfo;
         this.cars = res.cars;
         this.msg.name = res.wxUserInfo.trueName;
-        localStorage.setItem('trueName',this.msg.name)
+        localStorage.setItem("trueName", this.msg.name);
         // this.getStoreProject(res.newUser)
         this.newUser = res.newUser;
         if (this.$route.query.licensePlate) {
@@ -485,6 +495,8 @@ export default {
           },
         ];
         this.checkedId = [item.id];
+        //传入服务商号码
+        this.loadPhone = this.projects[serviceindex].phone;
         /**   多选功能暂时不用
           // 购物车consumerProjectList。全部列表projects
           // 先看购物车里有没有点击的这个，
@@ -520,6 +532,11 @@ export default {
       // 赋值给正主consumerProjectInfos
       this.consumerProjectInfos = this.consumerProjectList;
       console.log(this.consumerProjectInfos);
+      if (this.consumerProjectInfos[0].price == 0) {
+        this.showPhone = true;
+      } else {
+        this.showPhone = false;
+      }
       this.idList = this.checkedId;
       this.closeDialog();
     },
@@ -643,23 +660,22 @@ export default {
           const resid = res;
           this.timer = setInterval(() => {
             this.$get("/wechat/order/getDoorState", {
-                orderId: resid,
-              })
-              .then((doorres) => {
-                // console.log(res)
-                if (doorres.isBuffer) {
-                  this.arkInfoState = "billingOrder";
-                  this.$refs.openDoor.changeTxt("billingOrder", doorres.doorSn);
-                  this.isOpenDoorShow = true;
-                } else {
-                  clearInterval(this.timer);
-                  this.$refs.successArk.changeTxt("billingOrder");
-                  this.isSuccessShow = true;
-                  setTimeout(() => {
-                    this.$router.push({ path: "/myOrder" });
-                  }, 1000);
-                }
-              });
+              orderId: resid,
+            }).then((doorres) => {
+              // console.log(res)
+              if (doorres.isBuffer) {
+                this.arkInfoState = "billingOrder";
+                this.$refs.openDoor.changeTxt("billingOrder", doorres.doorSn);
+                this.isOpenDoorShow = true;
+              } else {
+                clearInterval(this.timer);
+                this.$refs.successArk.changeTxt("billingOrder");
+                this.isSuccessShow = true;
+                setTimeout(() => {
+                  this.$router.push({ path: "/myOrder" });
+                }, 1000);
+              }
+            });
           }, 3000);
         })
         .catch((err) => {
@@ -744,7 +760,7 @@ h(n) {
 }
 
 w(n) {
-  ((((((n / 7.5vw))))));
+  (((((((n / 7.5vw)))))));
 }
 
 .open-protocol {
@@ -853,12 +869,12 @@ w(n) {
   display: inline-block;
 }
 
-.billing-order-project-count {
-  color: #B3B3B3;
-  font-size: w(22);
+.billing-order-project-phone {
+  color: #2049bf;
+  font-size: w(26);
   position: absolute;
   right: w(50);
-  bottom: h(20);
+  bottom: h(40);
 }
 
 .store-color {
@@ -945,9 +961,9 @@ w(n) {
 }
 
 .is-old {
-  position:relative;
-  top:w(18);
-  left:w(10);
+  position: relative;
+  top: w(18);
+  left: w(10);
   color: #AFAEAE;
 }
 
@@ -959,7 +975,7 @@ w(n) {
   .billing-order-dialog-item {
     padding: h(30) w(30) h(30) 0;
     border-bottom: $border-gray;
-    position:relative;
+    position: relative;
 
     div {
       width: w(450);
@@ -967,13 +983,14 @@ w(n) {
       margin-top: h(20);
       font-size: w(25);
     }
-    .projectitem{
-      font-size:w(30)
-      width:w(350);
-      position:absolute;
-      top:w(10);
-      left:0;
-      padding:w(20) 0 w(20) w(70)
+
+    .projectitem {
+      font-size: w(30);
+      width: w(350);
+      position: absolute;
+      top: w(10);
+      left: 0;
+      padding: w(20) 0 w(20) w(70);
     }
   }
 
@@ -1051,10 +1068,18 @@ w(n) {
   border-bottom: 1px solid #ebebeb;
   line-height: h(60);
 }
+
 .feedback {
-  position fixed;
-  right 0
-  bottom h(600)
+  position: fixed;
+  right: 0;
+  bottom: h(600);
 }
 
+.billing-order-phone {
+  height: w(30);
+  width: w(30);
+  position: absolute;
+  // top:w()
+  left: w(-35);
+}
 </style>

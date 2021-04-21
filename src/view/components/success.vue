@@ -17,8 +17,7 @@
 
 <script>
 import feedBack from '@/view/components/feedBack.vue';
-
-  import wx from 'weixin-js-sdk'
+import wx from 'weixin-js-sdk'
   export default {
      components: { feedBack },
     name: 'success',
@@ -91,7 +90,7 @@ import feedBack from '@/view/components/feedBack.vue';
           case 'tecFinish': {
             console.log(this.arkInfoState)
             setTimeout(()=> {
-              wx.closeWindow()
+              this.$router.push({ path: "/order" });
             },1000)
             this.msg = null
             this.arkInfo = {

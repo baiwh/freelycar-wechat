@@ -17,6 +17,7 @@ axios.interceptors.request.use(
     if (localStorage.getItem('Authorization')) {
       config.headers.Authorization = localStorage.getItem('Authorization');
     }
+    console.log(config)
     return config;
   },
   error => {
@@ -68,6 +69,7 @@ export function get(url, params = {}) {
       params: params
     })
       .then(response => {
+        // console.log(response)
         if (response.data.code === 1) {
           resolve(response.data.data)
         } else {

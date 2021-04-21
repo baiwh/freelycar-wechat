@@ -28,8 +28,9 @@
     },
     methods: {
       getCar(){
+        //修改接口
         this.$get('/wechat/client/listPersonalCars',{
-          clientId:localStorage.getItem('clientId')
+          wxUserId:localStorage.getItem('id')
         }).then(res=>{
           console.log(res)
           this.carList = res

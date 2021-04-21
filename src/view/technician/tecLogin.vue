@@ -79,11 +79,11 @@ export default {
         localStorage.setItem("headImgUrl", res.employee.headImgUrl);
         localStorage.setItem("openId", res.employee.openId);
         localStorage.setItem("Authorization", "Bearer " + res.jwt);
-
         this.staffList = res.staffList;
         console.log(this.staffList);
-
-        this.$router.push({ path: "/order" });
+        this.$router.push({path:'/order'});
+      }).catch((e)=>{
+        alert(e);
       });
     },
 

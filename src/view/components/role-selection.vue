@@ -48,7 +48,7 @@ export default {
     if(this.createTime && (this.timestamp-this.createTime)>300){
       this.isFailure = true;
     }else{
-      this.isLogin();
+      this.checkSubscribe();
     }
   },
   beforeDestroy() {
@@ -73,17 +73,12 @@ export default {
         //如果用户已经登录，
         if (
           localStorage.getItem("jwt") !== null &&
-          localStorage.getItem("clientId") !== null
+          localStorage.getItem("id") !== null
         ) {
           this.trueName = localStorage.getItem("trueName");
           //若用户没有填写真实姓名，则先让其填写真实姓名
-          if (this.trueName === "" || this.trueName === null) {
-            alert("请完善您的真实姓名");
-            this.$router.push({ path: "/userInfo" });
-          } else {
-            //通过扫码进来的要判断网点id与用户默认id是否相同
-            this.getUserArkInfo();
-          }
+          //先更改网点
+          this.getUserArkInfo();
         }
       } else {
         this.$router.push({ path: "/login", query: { arkSn: this.arkSn } });
@@ -191,7 +186,13 @@ export default {
         // console.log(res)
         localStorage.setItem("arkName", res.name);
         if (res.storeId === localStorage.getItem("storeId")) {
-          this.getOrderState();
+          if (this.trueName === "" || this.trueName === null) {
+            alert("请完善您的真实姓名");
+            this.$router.push({ path: "/userInfo" });
+          } else {
+            //通过扫码进来的要判断网点id与用户默认id是否相同
+            this.getOrderState();
+          }
         } else {
           //扫码就要更新网点信息
           this.$post("/wechat/wxuser/chooseDefaultStore", {
@@ -203,7 +204,13 @@ export default {
               localStorage.setItem("storeId", res.defaultStoreId);
               localStorage.setItem("clientId", res.defaultClientId);
             }
+            if (this.trueName === "" || this.trueName === null) {
+            alert("请完善您的真实姓名");
+            this.$router.push({ path: "/userInfo" });
+          } else {
+            //通过扫码进来的要判断网点id与用户默认id是否相同
             this.getOrderState();
+          }
           });
         }
       });
@@ -264,7 +271,10 @@ export default {
                   alert("非下单智能柜！");
                   this.$router.push({ path: "/myOrder" });
                 }
-              });
+              }).catch((res)=>{
+                alert(res);
+                this.$router.push({ path: "/myOrder" });
+              })
             } else {
               this.$router.push({
                 path: "/billingOrder",

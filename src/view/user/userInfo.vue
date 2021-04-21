@@ -65,7 +65,7 @@ import feedBack from '@/view/components/feedBack.vue';
             localStorage.setItem('clientId',res.defaultClientId)
             // 检查是否有车
             this.$get('/wechat/client/listPersonalCars',{
-              clientId:res.defaultClientId
+              wxUserId:localStorage.getItem('id')
             }).then(res=>{
               if(res.length>0){
                 this.$router.push({path:'/billingOrder'})

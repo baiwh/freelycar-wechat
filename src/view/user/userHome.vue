@@ -98,6 +98,7 @@ import feedBack from '@/view/components/feedBack.vue';
         this.$get('/wechat/wxuser/getCurrentPersonalInfo',{
           id:localStorage.getItem('id')
         }).then(res=>{
+          console.log(res)
           this.wxUserInfo=res.wxUserInfo
           this.newUser = res.newUser;
           localStorage.setItem("newUser", this.newUser);
@@ -135,10 +136,10 @@ import feedBack from '@/view/components/feedBack.vue';
       },
 
     },
-    created: function(){
+    mounted: function(){
       if(localStorage.getItem('employeeId')){
         this.$router.push({path:'/tecHome'})
-      }else if(localStorage.getItem('clientId')){
+      }else if(localStorage.getItem('id')){
         this.storeName=localStorage.getItem('storeName')?localStorage.getItem('storeName'):"暂无"
         this.getAllInfo()
       }else {
